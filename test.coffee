@@ -4,7 +4,7 @@ sh = require 'execSync'
 
 resultFile = './result.png'
 
-FONT_FILE = "./vendor/rounded-x-mplus-1p-black.ttf"
+FONT_FILE = "./vendor/rounded-x-mplus-1m-bold.ttf"
 VENDOR_DIR = './vendor/'
 NONNON_DIR = './vendor/nonnons/'
 TMP_M_DIR = './tmp/moji/'
@@ -12,14 +12,14 @@ TMP_N_DIR = './tmp/nonnon/'
 OUTPUT_FILE = './out.gif'
 
 # magic number of the string height
-heights = [6, 6, 15, 23, 23, 56, 56, 80, 90, 90, 96, 106, 115, 119, 123, 130, 135, 140]
+heights = [6, 6, 15, 24, 24, 60, 80, 90, 100, 110, 120, 124, 134, 136, 137, 138, 139, 140]
 
 mojiConfig = {}
 
-mojiConfig.moji = '今回はここまで'.split ''
+mojiConfig.moji = 'のんのんびより'.split ''
 # hardcoding sizes 
 mojiConfig.size = [80, 64, 78, 64, 64, 64, 78]
-mojiConfig.geo = ['+80+5', '+75+30', '+135+15', '+200+25', '+250+25', '+295+5', '+335+0']
+mojiConfig.geo = ['+80+5', '+65+30', '+115+15', '+187+25', '+240+25', '+287+5', '+335+0']
 # hardcoding colors (mecabでやりたい)
 mojiConfig.fill = [
 	'#dd188b', '#dd188b'
@@ -45,6 +45,8 @@ image =
 			" -font #{FONT_FILE}" +
 			" -pointsize #{obj.pointsize}" +
 			" -fill '#{obj.fill}'" +
+			" -stroke '#{obj.fill}'" +
+			" -strokewidth 2" +
 			" label:#{obj.label}" +
 			" -rotate #{obj.rotate}" +
 			" #{obj.file}"
@@ -76,12 +78,13 @@ image =
 
 		geo = '+60+' + (74 - height/2)
 
-		sh.run "convert" +
+		console.log q = "convert" +
 			" #{src}" +
 			" #{moji}" +
 			" -gravity center" +
 			" -geometry #{geo}" +
 			" -composite #{out}"
+		sh.run q
 
 
 	toGif: (obj) ->

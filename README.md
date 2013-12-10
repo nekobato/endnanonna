@@ -12,7 +12,7 @@ TBD
 
 # Licenses
 
-* Rounded M+ ( http://d.hatena.ne.jp/itouhiro/20120226 )
+* Rounded M+ ( https://sites.google.com/site/roundedmplus/ )
 * のんのんびより ( Pirated )
 
 # TODO
