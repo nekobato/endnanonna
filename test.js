@@ -105,6 +105,7 @@
       var id;
       mojiConfig.moji = str.split('');
       id = randomId(8);
+      TMP_M_DIR = "" + TMP_M_DIR + id + "/";
       createMoji(mojiConfig, id);
       return fs.readdir('./vendor/nonnons', function(err, files) {
         var file, i, number, _i, _len;

@@ -116,6 +116,7 @@ module.exports =
 	run: (str, callback) ->
 		mojiConfig.moji = str.split ''
 		id = randomId 8
+		TMP_M_DIR = "#{TMP_M_DIR}#{id}/"
 		#id = "test" # hardcoding
 
 		createMoji mojiConfig, id
