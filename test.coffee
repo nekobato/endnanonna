@@ -116,7 +116,9 @@ module.exports =
 	run: (str, callback) ->
 		mojiConfig.moji = str.split ''
 		id = randomId 8
+		fs.mkdirSync "#{TMP_M_DIR}#{id}"
 		TMP_M_DIR = "#{TMP_M_DIR}#{id}/"
+		console.log TMP_M_DIR
 		#id = "test" # hardcoding
 
 		createMoji mojiConfig, id
