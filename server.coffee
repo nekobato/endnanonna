@@ -1,16 +1,13 @@
 #!/usr/bin/env node
 
-process.env.ROOT_DIR = ''
-process.env.BASE_URL = ''
-
 # Module dependencies
 express = require 'express'
 path = require 'path'
 http = require 'http'
-c_p = require 'child_process'
-im = require 'imagemagick'
 os = require 'os'
 _ = require 'underscore'
+
+nonnon = require './test.js'
 
 # Express settigns
 app = express()
@@ -31,7 +28,19 @@ app.use express.errorHandler()  if "development" is app.get("env")
 app.get "/", (req, res) ->
 	res.render 'index'
 
-app.get "/create/:query", (req, res) ->
+app.get "/create", (req, res) ->
+	if ! req.query.string
+		return res.send 'error'
+	
+	str = req.query.string
+
+	if str.match /^([^\x01-\x7E]{7})/
+		if str.match /^([^\x01-\x7E]{8})/
+			return res.send {result: 'error', msg: '日本語７文字制限あります'}
+		nonnon.run str, (id) ->
+			return res.send {result: 'success', id: id}
+	else
+		return res.send {result: 'error', msg: '日本語７文字制限あります'}
 	#TBD
 
 # Start server
