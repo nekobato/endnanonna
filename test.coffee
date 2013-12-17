@@ -118,9 +118,8 @@ module.exports =
 		id = randomId 8
 		fs.mkdirSync "#{TMP_M_DIR}#{id}"
 		TMP_M_DIR = "#{TMP_M_DIR}#{id}/"
-		console.log TMP_M_DIR
-		#id = "test" # hardcoding
 
+		#id = "test" # hardcoding
 		createMoji mojiConfig, id
 
 		fs.readdir './vendor/nonnons', (err, files) ->
@@ -137,7 +136,6 @@ module.exports =
 					i++
 				else if number >= 124
 					image.compo "#{NONNON_DIR}#{file}", "#{TMP_M_DIR}#{id}_sh.png", heights[i], "#{TMP_N_DIR}nonnon#{number}.png"
-
 			image.toGif(id)
 			console.log id
 			callback id

@@ -18,6 +18,9 @@ node_modules
 
 tmp/nonnon/*.png
 tmp/moji/*.png
+tmp/moji/*/*.png
 
 vendor/rounded_outline_fonts
 vendor/rounded-mplus-x-20130705
+
+tmp/nonnon/*.png
