@@ -16,7 +16,7 @@ results
 npm-debug.log
 node_modules
 
-tmp/no/*/*.png
+tmp/no/*/*.gif
 tmp/moji/*/*.png
 dist/out/*
 

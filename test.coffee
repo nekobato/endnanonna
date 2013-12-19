@@ -90,48 +90,37 @@ randomId = (len) ->
 module.exports =
 	# main flow
 	run: (str, callback) ->
-		# moji -> config
+		# moji config
 		mojiConfig.moji = str.split ''
-
 		# create id
 		id = randomId 8
-
 		# dirconfig
 		tmpMojiDir = "./tmp/moji/#{id}"
 		tmpNoDir   = "./tmp/no/#{id}"
-		
 		# make temporary directory
 		fs.mkdirSync tmpMojiDir
 		fs.mkdirSync tmpNoDir
-
 		# set splice (first str + each str = moji image width)
 		splice = 0
 		splice += s - Math.floor(s / 10) for s in mojiConfig.size
-
 		# create each moji
 		for i in [0..mojiConfig.moji.length-1]
-
 			image.moji {
 				pointsize: mojiConfig.size[i]
 				fill: mojiConfig.fill[i],
 				label: mojiConfig.moji[i],
 				rotate: mojiConfig.rotate[i]
 			}, "#{tmpMojiDir}/#{i}.png"
-
 			if i is 0 or i is mojiConfig.moji.length-2 or i is mojiConfig.moji.length-1
 				image.expand "#{tmpMojiDir}/#{i}.png", "#{tmpMojiDir}/#{i}.png", Math.floor(mojiConfig.size[i] * 1.6)
-				console.log "#{i} is expanded"
 			if i is 0
 				image.ground "#{tmpMojiDir}/#{i}.png", "#{tmpMojiDir}/base.png", splice
-				console.log "#{i} is ground"
 			else
 				image.append "#{tmpMojiDir}/#{i}.png", "#{tmpMojiDir}/base.png", mojiConfig.geo[i]
-				console.log "#{i} is appended"
-
+		# composition
 		fs.readdir './vendor/no', (err, files) ->
 			i = 0
 			for file in files when file.match /^nonnon([0-9]+)\.gif/
-				console.log file
 				num = RegExp.$1
 				# magic number of the movie timeline
 				# 107 ~ 123 107から文字が出始める
@@ -142,7 +131,10 @@ module.exports =
 					i++
 				else if num >= 124
 					image.compo "#{NO_DIR}/#{file}", "#{tmpMojiDir}/out.png", heights[i], "#{tmpNoDir}/nonnon#{num}.gif"
+			# create animated gif
 			image.toGif(tmpNoDir, "#{OUT_DIR}/#{id}.gif")
-			console.log id
+
+			console.log "created: #{id}"
+			# callback
 			callback id
 	

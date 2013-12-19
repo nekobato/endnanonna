@@ -94,14 +94,11 @@
         }, "" + tmpMojiDir + "/" + i + ".png");
         if (i === 0 || i === mojiConfig.moji.length - 2 || i === mojiConfig.moji.length - 1) {
           image.expand("" + tmpMojiDir + "/" + i + ".png", "" + tmpMojiDir + "/" + i + ".png", Math.floor(mojiConfig.size[i] * 1.6));
-          console.log("" + i + " is expanded");
         }
         if (i === 0) {
           image.ground("" + tmpMojiDir + "/" + i + ".png", "" + tmpMojiDir + "/base.png", splice);
-          console.log("" + i + " is ground");
         } else {
           image.append("" + tmpMojiDir + "/" + i + ".png", "" + tmpMojiDir + "/base.png", mojiConfig.geo[i]);
-          console.log("" + i + " is appended");
         }
       }
       return fs.readdir('./vendor/no', function(err, files) {
@@ -112,7 +109,6 @@
           if (!(file.match(/^nonnon([0-9]+)\.gif/))) {
             continue;
           }
-          console.log(file);
           num = RegExp.$1;
           if ((124 > num && num > 106)) {
             image.expand("" + tmpMojiDir + "/base.png", "" + tmpMojiDir + "/out.png", heights[i]);
@@ -123,7 +119,7 @@
           }
         }
         image.toGif(tmpNoDir, "" + OUT_DIR + "/" + id + ".gif");
-        console.log(id);
+        console.log("created: " + id);
         return callback(id);
       });
     }
