@@ -16,8 +16,8 @@ results
 npm-debug.log
 node_modules
 
-tmp/no/*/*.gif
-tmp/moji/*/*.png
+tmp/no/*/*
+tmp/moji/*/*
 dist/out/*
 
 vendor/rounded_outline_fonts
