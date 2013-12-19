@@ -29,7 +29,7 @@ app.get "/", (req, res) ->
 	res.render 'index'
 
 app.get "/create", (req, res) ->
-	if ! req.query.string
+	if not req.query.string
 		return res.send 'error'
 	
 	str = req.query.string
@@ -41,7 +41,6 @@ app.get "/create", (req, res) ->
 			return res.send {result: 'success', id: id}
 	else
 		return res.send {result: 'error', msg: '日本語７文字制限あります'}
-	#TBD
 
 # Start server
 http.createServer(app).listen app.get("port"), ->

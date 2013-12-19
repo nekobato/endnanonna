@@ -3,10 +3,8 @@ c_p = require 'child_process'
 sh = require 'execSync'
 
 FONT_FILE = "./vendor/rounded-x-mplus-1m-bold.ttf"
-NONNON_DIR = './vendor/nonnons/'
-TMP_M_DIR = './tmp/moji/'
-TMP_N_DIR = './tmp/nonnon/'
-OUTPUT_FILE = './out.gif'
+NO_DIR    = './vendor/no'
+OUT_DIR   = './dist/out'
 
 # magic numbers
 mojiConfig = {}
@@ -25,7 +23,7 @@ create = (height, file = 124) ->
 
 
 image =
-	moji: (obj) ->
+	moji: (obj, out) ->
 		#	obj = label pointsize fill rotate file
 		sh.run "convert" +
 			" -background none" +
@@ -37,7 +35,7 @@ image =
 			" label:#{obj.label}" +
 			" -trim" +
 			" -rotate #{obj.rotate}" +
-			" #{obj.file}"
+			" #{out}"
 
 
 	expand: (src, out, height) ->
@@ -48,20 +46,16 @@ image =
 			" -trim" +
 			" #{out}"
 
-	append: (obj, id) ->
-		spliceW = 0
-		spliceW += s - Math.floor(s / 10) for s in obj.size
-		sh.run "convert -background none -gravity east -splice #{spliceW}x" +
-			" #{TMP_M_DIR}#{id}_0.png" +
-			" #{TMP_M_DIR}#{id}.png"
+	ground: (src, out, splice) ->
+		sh.run "convert -background none -gravity east" +
+			" -splice #{splice}x" +
+			" #{src}" +
+			" #{out}"
 
-		for i in [1..obj.moji.length-1]
-			sh.run "convert #{TMP_M_DIR}#{id}.png #{TMP_M_DIR}#{id}_#{i}.png" +
-				" -gravity southwest -geometry #{obj.geo[i]}" +
-				" -composite #{TMP_M_DIR}#{id}.png"
-		#変形を色々すると、余白が生まれるので、切り取る
-		#sh.run "convert -crop 100%x65-50+25 #{TMP_M_DIR}#{id}.png #{TMP_M_DIR}#{id}.png"
-
+	append: (src, out, geo) ->
+		sh.run "convert #{out} #{src}" +
+			" -gravity southwest -geometry #{geo}" +
+			" -composite #{out}"
 
 	compo: (src, moji, height, out) ->
 
@@ -75,13 +69,12 @@ image =
 			" -composite #{out}"
 
 
-	toGif: (id) ->
-		# pngは15fpsで用意してあるので、およそdelay=7で一応対応
-		sh.run "convert" +
-			" -delay 7" +
-			" -loop 1" +
-			" #{TMP_N_DIR}*.png" +
-			" ./dist/out/#{id}.gif"
+	toGif: (dir, out) ->
+		# gifは15fpsで用意してあるので、およそdelay=7で一応対応
+		sh.run "gifsicle" +
+			" --delay=7" +
+			" ./vendor/no.gif #{dir}/*.gif" +
+			" > #{out}"
 
 # ランダムにID (server.coffeeに移動する予定)
 randomId = (len) ->
@@ -93,50 +86,63 @@ randomId = (len) ->
 		res += a[Math.floor(Math.random() * a.length)]
 	res
 
-
-createMoji = (obj, id) ->
-
-	for i in [0..obj.moji.length-1]
-
-		image.moji {
-			pointsize: obj.size[i]
-			fill: obj.fill[i],
-			label: obj.moji[i],
-			rotate: obj.rotate[i],
-			file: "#{TMP_M_DIR}#{id}_#{i}.png"}
-		# １, 最後, 最後から２番目の文字は縦に伸ばす
-		if i is 0 or i is obj.moji.length-2 or i is obj.moji.length-1
-			image.expand "#{TMP_M_DIR}#{id}_#{i}.png", "#{TMP_M_DIR}#{id}_#{i}.png", Math.floor(obj.size[i] * 1.6)
-
-	image.append obj, id
-
 # Script start
-
 module.exports =
+	# main flow
 	run: (str, callback) ->
+		# moji -> config
 		mojiConfig.moji = str.split ''
+
+		# create id
 		id = randomId 8
-		fs.mkdirSync "#{TMP_M_DIR}#{id}"
-		TMP_M_DIR = "#{TMP_M_DIR}#{id}/"
 
-		#id = "test" # hardcoding
-		createMoji mojiConfig, id
+		# dirconfig
+		tmpMojiDir = "./tmp/moji/#{id}"
+		tmpNoDir   = "./tmp/no/#{id}"
+		
+		# make temporary directory
+		fs.mkdirSync tmpMojiDir
+		fs.mkdirSync tmpNoDir
 
-		fs.readdir './vendor/nonnons', (err, files) ->
+		# set splice (first str + each str = moji image width)
+		splice = 0
+		splice += s - Math.floor(s / 10) for s in mojiConfig.size
+
+		# create each moji
+		for i in [0..mojiConfig.moji.length-1]
+
+			image.moji {
+				pointsize: mojiConfig.size[i]
+				fill: mojiConfig.fill[i],
+				label: mojiConfig.moji[i],
+				rotate: mojiConfig.rotate[i]
+			}, "#{tmpMojiDir}/#{i}.png"
+
+			if i is 0 or i is mojiConfig.moji.length-2 or i is mojiConfig.moji.length-1
+				image.expand "#{tmpMojiDir}/#{i}.png", "#{tmpMojiDir}/#{i}.png", Math.floor(mojiConfig.size[i] * 1.6)
+				console.log "#{i} is expanded"
+			if i is 0
+				image.ground "#{tmpMojiDir}/#{i}.png", "#{tmpMojiDir}/base.png", splice
+				console.log "#{i} is ground"
+			else
+				image.append "#{tmpMojiDir}/#{i}.png", "#{tmpMojiDir}/base.png", mojiConfig.geo[i]
+				console.log "#{i} is appended"
+
+		fs.readdir './vendor/no', (err, files) ->
 			i = 0
-			for file in files when not file.match /^\./ # fxxk .DS_Store
-				file.match /^nonnon([0-9]+)\.png/
-				number = RegExp.$1
+			for file in files when file.match /^nonnon([0-9]+)\.gif/
+				console.log file
+				num = RegExp.$1
 				# magic number of the movie timeline
 				# 107 ~ 123 107から文字が出始める
 				# 124 ~ 200 124から文字サイズ固定
-				if 124 > number > 106
-					image.expand "#{TMP_M_DIR}#{id}.png", "#{TMP_M_DIR}#{id}_sh.png", heights[i]
-					image.compo "#{NONNON_DIR}#{file}", "#{TMP_M_DIR}#{id}_sh.png", heights[i], "#{TMP_N_DIR}nonnon#{number}.png"
+				if 124 > num > 106
+					image.expand "#{tmpMojiDir}/base.png", "#{tmpMojiDir}/out.png", heights[i]
+					image.compo "#{NO_DIR}/#{file}", "#{tmpMojiDir}/out.png", heights[i], "#{tmpNoDir}/nonnon#{num}.gif"
 					i++
-				else if number >= 124
-					image.compo "#{NONNON_DIR}#{file}", "#{TMP_M_DIR}#{id}_sh.png", heights[i], "#{TMP_N_DIR}nonnon#{number}.png"
-			image.toGif(id)
+				else if num >= 124
+					image.compo "#{NO_DIR}/#{file}", "#{tmpMojiDir}/out.png", heights[i], "#{tmpNoDir}/nonnon#{num}.gif"
+			image.toGif(tmpNoDir, "#{OUT_DIR}/#{id}.gif")
 			console.log id
 			callback id
 	

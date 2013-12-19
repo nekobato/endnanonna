@@ -2,18 +2,21 @@ doctype 5
 html
 	head
 		title End-nanonna
+		meta(name="apple-mobile-web-app-capable", content="yes")
+		meta(name="viewport", content="user-scalable=yes")
+		meta(http-equiv="X-UA-Compatible", content="chrome=1")
 		link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css')
 		link(rel='stylesheet', href='/stylesheets/style.css')
 	body
 		header
 			h1
 				img(src="/images/title.png")
-	section#section-form
-		form#form-maker
-			input#str(type='text', name='string', placeholder='のんのんびより')
-			input.btn.btn-primary.btn-lg.btn-block(type='submit', value='生成')
-	section#section-out(style="display:none")
-		img(src="/images/loading.gif")
-		p 二十秒程度かかります。。。
+		section#section-form
+			form#form-maker
+				input#str(type='text', name='string', placeholder='のんのんびより')
+				input.btn.btn-primary.btn-lg.btn-block(type='submit', value='生成')
+		section#section-out(style="display:none")
+			img(src="/images/loading.gif")
+			p １分程度かかります。。。
 	script(src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js")
 	script(src="/javascripts/script.js")
