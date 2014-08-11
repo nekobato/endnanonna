@@ -7,7 +7,7 @@ http = require 'http'
 os = require 'os'
 _ = require 'underscore'
 
-nonnon = require './test.js'
+nonnon = require path.resolve 'test'
 
 # Express settigns
 app = express()
