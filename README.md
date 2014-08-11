@@ -8,19 +8,13 @@ End-nanon
 
 # How to use
 
-TBD
+```
+git clone https://github.com/nekobato/endnanonna
+make
+npm start
+```
 
 # Licenses
 
 * Rounded M+ ( https://sites.google.com/site/roundedmplus/ )
 * のんのんびより ( Pirated )
-
-# TODO
-
-* ~~文字の適切な傾き~~
-* ~~画像にちゃんと消しゴムかける~~
-* フォントが微妙に合わないのでsvg編集してビルドする
-* 文字数の制限をなくす
-* ~~API公開~~
-* ありえないキャラの組み合わせを可能にする
-* 伸ばし棒など、正方形でない文字を使うと下に付くバグ
