@@ -12,7 +12,7 @@ nonnon = require path.resolve 'test'
 # Express settigns
 app = express()
 
-app.set "port", process.env.PORT or 3006
+app.set "port", process.env.PORT or 3000
 app.set "views", __dirname + "/views"
 app.set "view engine", "jade"
 app.use express.favicon(__dirname + '/dist/favicon.ico', {maxAge: 2592000000})
