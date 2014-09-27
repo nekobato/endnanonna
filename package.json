@@ -6,16 +6,16 @@
     "start": "coffee server.coffee"
   },
   "dependencies": {
-    "execSync": "^1.0.1-pre",
-    "express": "3.4.0",
+    "execSync": "^1.0.2",
+    "express": "^4.9.5",
     "imagemagick": "~0.1.3",
     "jade": "*",
     "underscore": "^1.6.0"
   },
   "devDependencies": {
     "grunt": "~0.4.2",
-    "grunt-contrib-coffee": "~0.7.0",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-sass": "~0.5.1"
+    "grunt-contrib-coffee": "^0.11.1",
+    "grunt-contrib-sass": "^0.8.1",
+    "grunt-contrib-watch": "^0.6.1"
   }
 }
