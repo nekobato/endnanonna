@@ -1,49 +1,69 @@
-#!/usr/bin/env node
 
-# Module dependencies
-express = require 'express'
-path = require 'path'
-http = require 'http'
-os = require 'os'
-_ = require 'underscore'
+'use strict'
 
-nonnon = require path.resolve 'test'
+#require
 
-# Express settigns
+cookieParser = require("cookie-parser")
+bodyParser = require("body-parser")
+express = require("express")
+favicon = require("serve-favicon")
+logger = require("morgan")
+routes = require("./routes")
+debug = require('debug')('express')
+path = require("path")
+
 app = express()
 
-app.set "port", process.env.PORT or 3000
-app.set "views", __dirname + "/views"
+# app config
+
+app.set "views", path.join(__dirname, "views")
 app.set "view engine", "jade"
-app.use express.favicon(__dirname + '/dist/favicon.ico', {maxAge: 2592000000})
-app.use express.logger("dev")
-app.use express.compress()
-app.use express.bodyParser()
-app.use express.methodOverride()
-app.use app.router
+app.set "port", process.env.PORT or 3000
+
+
+#app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use logger("dev")
+app.use bodyParser.json()
+app.use bodyParser.urlencoded(extended: false)
+app.use cookieParser()
 app.use express.static(path.join(__dirname, "dist"))
-app.use express.errorHandler()  if "development" is app.get("env")
-app.disable 'x-powered-by'
+app.use "/", routes
 
-# Routes & APIs
 
-app.get "/", (req, res) ->
-	res.render 'index'
+# catch 404 and forward to error handler
 
-app.get "/create", (req, res) ->
-	if not req.query.string
-		return res.send 'error'
-	
-	str = req.query.string
+app.use (req, res, next) ->
+  err = new Error("Not Found")
+  err.status = 404
+  next err
+  return
 
-	if str.match /^([^\x01-\x7E]{7})/
-		if str.match /^([^\x01-\x7E]{8})/
-			return res.send {result: 'error', msg: '日本語７文字制限あります'}
-		nonnon.run str, (id) ->
-			return res.send {result: 'success', id: id}
-	else
-		return res.send {result: 'error', msg: '日本語７文字制限あります'}
 
-# Start server
-http.createServer(app).listen app.get("port"), ->
-	console.log "End-nanon listening on port " + app.get("port")
+# error handlers
+
+if app.get("env") is "development"
+  app.use (err, req, res, next) ->
+    res.status err.status or 500
+    res.render "error",
+      message: err.message
+      error: err
+
+    return
+
+
+# production error handler
+
+app.use (err, req, res, next) ->
+  res.status err.status or 500
+  res.render "error",
+    message: err.message
+    error: {}
+
+  return
+
+
+server = app.listen(app.get("port"), ->
+  debug "Express server listening on port #{server.address().port}"
+
+  return
+)
