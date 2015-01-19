@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "coffee server.coffee"
+    "start": "./node_modules/.bin/coffee server.coffee"
   },
   "dependencies": {
     "execSync": "^1.0.2",

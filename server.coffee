@@ -8,7 +8,6 @@ bodyParser = require("body-parser")
 express = require("express")
 favicon = require("serve-favicon")
 logger = require("morgan")
-routes = require("./routes")
 debug = require('debug')('express')
 path = require("path")
 
@@ -27,7 +26,7 @@ app.use bodyParser.json()
 app.use bodyParser.urlencoded(extended: false)
 app.use cookieParser()
 app.use express.static(path.join(__dirname, "dist"))
-app.use "/", routes
+app.use "/", require './routes'
 
 
 # catch 404 and forward to error handler

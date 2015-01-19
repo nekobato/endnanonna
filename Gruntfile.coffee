@@ -5,7 +5,7 @@ module.exports = (grunt) ->
 
     coffee:
       options:
-        sourceMap: yes
+        sourceMap: no
       compile:
         files: [{
           expand: yes

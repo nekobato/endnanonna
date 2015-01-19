@@ -4,17 +4,11 @@ $('#form-maker').on 'submit', () ->
 	$("#form-maker").hide()
 	$("#section-out").show()
 
-	$.ajax('/create', { data: $(this).serialize(), dataType: "json" })
+	$.ajax('/create', { data: $(this).serialize(), dataType: "text" })
 	.done (data) ->
-		if data.result is "error"
-			$("header").show()
-			$("#form-maker").show()
-			$("#section-out").hide()
-			return alert data.msg
-
-		if data.result is "success"
-			$("#section-out").html("<img src='/out/#{data.id}.gif'>")
+		$("#section-out").html("<img src='/out/#{data}.gif'>")
 	.fail (data) ->
 		$("header").show()
 		$("#form-maker").show()
 		$("#section-out").hide()
+		return alert(data)

@@ -6,26 +6,15 @@
     $("#section-out").show();
     return $.ajax('/create', {
       data: $(this).serialize(),
-      dataType: "json"
+      dataType: "text"
     }).done(function(data) {
-      if (data.result === "error") {
-        $("header").show();
-        $("#form-maker").show();
-        $("#section-out").hide();
-        return alert(data.msg);
-      }
-      if (data.result === "success") {
-        return $("#section-out").html("<img src='/out/" + data.id + ".gif'>");
-      }
+      return $("#section-out").html("<img src='/out/" + data + ".gif'>");
     }).fail(function(data) {
       $("header").show();
       $("#form-maker").show();
-      return $("#section-out").hide();
+      $("#section-out").hide();
+      return alert(data);
     });
   });
 
 }).call(this);
-
-/*
-//@ sourceMappingURL=script.js.map
-*/
