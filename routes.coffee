@@ -13,7 +13,7 @@ router.get "/create", (req, res) ->
   if not req.query.string
     return res.status(400).send(error_message)
 
-  str = req.query.string
+  str = decodeURIComponent req.query.string
 
   if str.match /^([^\x01-\x7E]{7})/
     if str.match /^([^\x01-\x7E]{8})/
