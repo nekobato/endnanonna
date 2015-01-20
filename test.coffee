@@ -74,7 +74,7 @@ image =
     sh.run "gifsicle" +
       " --delay=7" +
       " ./vendor/no.gif #{dir}/*.gif" +
-      " --resize 480x270"
+      " --resize 480x270" +
       " > #{out}"
 
 # ランダムにID (server.coffeeに移動する予定)
