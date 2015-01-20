@@ -69,12 +69,17 @@ image =
       " -composite #{out}"
 
 
-  toGif: (dir, out) ->
+  toGif: (dir, out, option) ->
+    if option.mini?
+      option_mini = "--resize 340x200 --colors 100"
+    else
+      option_mini = ""
     # gifは15fpsで用意してあるので、およそdelay=7で一応対応
+    console.log option
     sh.run "gifsicle" +
-      " --delay=7" +
-      " ./vendor/no.gif #{dir}/*.gif" +
-      " --resize 480x270" +
+      " --delay=7 " +
+      "./vendor/no.gif #{dir}/*.gif " +
+      "#{option_mini}" +
       " > #{out}"
 
 # ランダムにID (server.coffeeに移動する予定)
@@ -90,7 +95,7 @@ randomId = (len) ->
 # Script start
 module.exports =
   # main flow
-  run: (str, callback) ->
+  run: (str, option, callback) ->
     # moji config
     mojiConfig.moji = str.split ''
     # create id
@@ -133,7 +138,7 @@ module.exports =
         else if num >= 124
           image.compo "#{NO_DIR}/#{file}", "#{tmpMojiDir}/out.png", heights[i], "#{tmpNoDir}/nonnon#{num}.gif"
       # create animated gif
-      image.toGif(tmpNoDir, "#{OUT_DIR}/#{id}.gif")
+      image.toGif(tmpNoDir, "#{OUT_DIR}/#{id}.gif", option)
 
       console.log "created: #{id}"
       # callback

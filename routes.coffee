@@ -18,7 +18,7 @@ router.get "/create", (req, res) ->
   if str.match /^([^\x01-\x7E]{7})/
     if str.match /^([^\x01-\x7E]{8})/
       return res.status(400).send(error_message)
-    nonnon.run str, (id) ->
+    nonnon.run str, {mini: req.query.mini?}, (id) ->
       return res.status(200).send(id)
   else
     return res.status(400).send(error_message)
