@@ -15,7 +15,7 @@ router.get "/create", (req, res) ->
 
   str = decodeURIComponent req.query.string
 
-  if str.match /^([^\x01-\x7E]{7})/
+  if str.match /^([^\x01-\x7E]{7})$/
     if str.match /^([^\x01-\x7E]{8})/
       return res.status(400).send(error_message)
     nonnon.run str, {mini: req.query.mini?}, (id) ->
