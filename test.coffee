@@ -1,6 +1,5 @@
-fs = require 'fs'
-c_p = require 'child_process'
-sh = require 'execSync'
+fs = require('fs')
+sh = require('child_process').execSync
 
 FONT_FILE = "./vendor/rounded-x-mplus-1m-bold.ttf"
 NO_DIR    = './vendor/no'
@@ -25,7 +24,7 @@ create = (height, file = 124) ->
 image =
   moji: (obj, out) ->
     # obj = label pointsize fill rotate file
-    sh.run "convert" +
+    sh "convert" +
       " -background none" +
       " -font #{FONT_FILE}" +
       " -pointsize #{obj.pointsize}" +
@@ -40,20 +39,20 @@ image =
 
   expand: (src, out, height) ->
 
-    sh.run "convert" +
+    sh "convert" +
       " -geometry x#{height}!" +
       " #{src}" +
       " -trim" +
       " #{out}"
 
   ground: (src, out, splice) ->
-    sh.run "convert -background none -gravity east" +
+    sh "convert -background none -gravity east" +
       " -splice #{splice}x" +
       " #{src}" +
       " #{out}"
 
   append: (src, out, geo) ->
-    sh.run "convert #{out} #{src}" +
+    sh "convert #{out} #{src}" +
       " -gravity southwest -geometry #{geo}" +
       " -composite #{out}"
 
@@ -61,7 +60,7 @@ image =
 
     geo = '+5+' + (72 - height/2)
 
-    sh.run "convert" +
+    sh "convert" +
       " #{src}" +
       " #{moji}" +
       " -gravity center" +
@@ -76,7 +75,7 @@ image =
       option_mini = ""
     # gifは15fpsで用意してあるので、およそdelay=7で一応対応
     console.log option
-    sh.run "gifsicle" +
+    sh "gifsicle" +
       " --delay=7 " +
       "./vendor/no.gif #{dir}/*.gif " +
       "#{option_mini}" +

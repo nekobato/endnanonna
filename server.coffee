@@ -60,9 +60,4 @@ app.use (err, req, res, next) ->
 
   return
 
-
-server = app.listen(app.get("port"), ->
-  debug "Express server listening on port #{server.address().port}"
-
-  return
-)
+module.exports = app

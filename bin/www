@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+require('coffee-script/register')
+const debug = require('debug')('express')
+const app = require('../server.coffee')
+
+server = app.listen(app.get("port"), function() {
+  debug("Express server listening on port " + server.address().port)
+  return
+})
