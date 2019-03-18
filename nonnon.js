@@ -9,9 +9,9 @@
 const fs = require('fs-extra');
 const sh = require('child_process').execSync;
 
-const FONT_FILE = './vendor/rounded-x-mplus-1m-bold.ttf';
-const NO_DIR = './vendor/no';
-const OUT_DIR = './dist/out';
+const FONT_FILE = `${__dirname}/vendor/rounded-x-mplus-1m-bold.ttf`;
+const NO_DIR = `${__dirname}/vendor/no`;
+const OUT_DIR = `${__dirname}/dist/out`;
 
 // magic numbers
 const mojiConfig = {};
@@ -56,15 +56,6 @@ const heights = [
   135,
   135
 ];
-
-const create = function(height, file) {
-  if (file == null) {
-    file = 124;
-  }
-  const geo = `+0+${74 - height / 2}`;
-  const top = `x${height}!`;
-  return console.log(`${file} is ${done}`);
-};
 
 const image = {
   moji(obj, out) {
