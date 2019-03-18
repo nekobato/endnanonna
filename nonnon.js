@@ -123,7 +123,7 @@ const image = {
     return sh(
       'gifsicle' +
         ' --delay=7 ' +
-        `./vendor/no.gif ${dir}/*.gif ` +
+        `${__dirname}/vendor/no.gif ${dir}/*.gif ` +
         `${option_mini}` +
         ` > ${out}`
     );
@@ -156,8 +156,8 @@ module.exports = {
     // create id
     const id = randomId(8);
     // dirconfig
-    const tmpMojiDir = `./tmp/moji/${id}`;
-    const tmpNoDir = `./tmp/no/${id}`;
+    const tmpMojiDir = `${__dirname}/tmp/moji/${id}`;
+    const tmpNoDir = `${__dirname}/tmp/no/${id}`;
     // make temporary directory
     fs.ensureDirSync(tmpMojiDir);
     fs.ensureDirSync(tmpNoDir);
@@ -207,7 +207,7 @@ module.exports = {
       }
     }
     // composition
-    return fs.readdir('./vendor/no', function(err, files) {
+    return fs.readdir(`${__dirname}/vendor/no`, function(err, files) {
       i = 0;
       for (let file of Array.from(files)) {
         if (file.match(/^nonnon([0-9]+)\.gif/)) {
