@@ -19,9 +19,7 @@ node_modules
 
 tmp/no/*/*
 tmp/moji/*/*
-dist/out/*
+dist/out/*.gif
 
 vendor/rounded_outline_fonts
 vendor/rounded-mplus-x-20130705
-
-*.js

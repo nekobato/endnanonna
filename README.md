@@ -1,20 +1,22 @@
-End-nanon
-===================
-のんのんびよりのEDのアレ生成
+# End-nanon
+
+のんのんびよりの ED のアレ生成
 
 # Introduction
 
-入力した文字からのんのんびよりのEDのアレをgifで生成するWeb APIです。
+入力した文字からのんのんびよりの ED のアレを gif で生成する Web API です。
 
 # How to use
 
+for Ubuntu
+
 ```
-git clone https://github.com/nekobato/endnanonna
-make
+sudo apt install imagemagick gifsicle
+npm install
 npm start
 ```
 
 # Licenses
 
-* Rounded M+ ( https://sites.google.com/site/roundedmplus/ )
-* のんのんびより ( Pirated )
+- Rounded M+ ( https://sites.google.com/site/roundedmplus/ )
+- のんのんびより ( Pirated )
