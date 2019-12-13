@@ -9,7 +9,7 @@ const path = require('path');
 const app = express();
 
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'html');
 app.set('port', process.env.PORT || 3000);
 
 app.use(logger('dev'));
