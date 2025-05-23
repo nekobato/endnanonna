@@ -1,25 +1,24 @@
-lib-cov
-*.seed
-*.log
-*.csv
-*.dat
-*.out
-*.pid
-*.gz
-*.map
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
 
-.DS_Store
-
-pids
-logs
-results
-
-npm-debug.log
+# Node dependencies
 node_modules
 
-tmp/no/*/*
-tmp/moji/*/*
-dist/out/*.gif
+# Logs
+logs
+*.log
 
-vendor/rounded_outline_fonts
-vendor/rounded-mplus-x-20130705
+# Misc
+.DS_Store
+.fleet
+.idea
+
+# Local env files
+.env
+.env.*
+!.env.example

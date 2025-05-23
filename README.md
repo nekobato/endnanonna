@@ -1,22 +1,75 @@
-# End-nanon
+# Nuxt Minimal Starter
 
-のんのんびよりの ED のアレ生成
+Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
-# Introduction
+## Setup
 
-入力した文字からのんのんびよりの ED のアレを gif で生成する Web API です。
+Make sure to install dependencies:
 
-# How to use
-
-for Ubuntu
-
-```
-sudo apt install imagemagick gifsicle
+```bash
+# npm
 npm install
-npm start
+
+# pnpm
+pnpm install
+
+# yarn
+yarn install
+
+# bun
+bun install
 ```
 
-# Licenses
+## Development Server
 
-- Rounded M+ ( https://sites.google.com/site/roundedmplus/ )
-- のんのんびより ( Pirated )
+Start the development server on `http://localhost:3000`:
+
+```bash
+# npm
+npm run dev
+
+# pnpm
+pnpm dev
+
+# yarn
+yarn dev
+
+# bun
+bun run dev
+```
+
+## Production
+
+Build the application for production:
+
+```bash
+# npm
+npm run build
+
+# pnpm
+pnpm build
+
+# yarn
+yarn build
+
+# bun
+bun run build
+```
+
+Locally preview production build:
+
+```bash
+# npm
+npm run preview
+
+# pnpm
+pnpm preview
+
+# yarn
+yarn preview
+
+# bun
+bun run preview
+```
+
+Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
