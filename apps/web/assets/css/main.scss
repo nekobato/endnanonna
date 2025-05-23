@@ -3,9 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-// カスタムスタイル
-@import url('https://fonts.googleapis.com/css2?family=Rounded+M+1c:wght@400;700&display=swap');
-
 :root {
   // のんのんびよりカラーパレット
   --color-pink: #dd188b;
@@ -18,7 +15,7 @@
   --gradient-secondary: linear-gradient(135deg, var(--color-green), var(--color-blue));
   
   // フォント
-  --font-primary: 'Rounded M+ 1c', sans-serif;
+  --font-primary: sans-serif;
 }
 
 // ベーススタイル

@@ -40,3 +40,33 @@ declare module "gif.js" {
 
   export = GIF;
 }
+
+declare module "gifuct-js" {
+  interface GIFDimensions {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  }
+
+  interface GIFFrame {
+    dims: GIFDimensions;
+    delay: number;
+    patch: Uint8Array;
+    disposalType: number;
+    transparentIndex?: number;
+  }
+
+  interface ParsedGIF {
+    width: number;
+    height: number;
+    frames: any[];
+    globalColorTable?: Uint8Array;
+  }
+
+  export function parseGIF(buffer: ArrayBuffer): ParsedGIF;
+  export function decompressFrames(
+    gif: ParsedGIF,
+    buildPatch: boolean
+  ): GIFFrame[];
+}

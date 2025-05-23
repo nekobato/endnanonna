@@ -19,7 +19,7 @@ export default {
         }
       },
       fontFamily: {
-        rounded: ['"Rounded M+ 1c"', "sans-serif"]
+        rounded: ['"Rounded-X M+ 1m bold"', "sans-serif"]
       },
       animation: {
         "gradient-shift": "gradientShift 15s ease infinite",

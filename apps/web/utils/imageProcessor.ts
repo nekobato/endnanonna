@@ -1,4 +1,5 @@
 import GIF from "gif.js";
+import { parseGIF, decompressFrames } from "gifuct-js";
 
 export interface ImageProcessorConfig {
   width: number;
@@ -175,31 +176,50 @@ export class CanvasImageProcessor {
   getContext(): CanvasRenderingContext2D {
     return this.ctx;
   }
-  // GIF画像を読み込んでフレームを取得
+  // GIF画像を読み込んでフレームを取得（gifuct-jsを使用）
   async loadGifFrames(gifUrl: string): Promise<GifFrame[]> {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
+    try {
+      // GIFファイルをArrayBufferとして取得
+      const response = await fetch(gifUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch GIF: ${response.status}`);
+      }
 
-      img.onload = () => {
-        // 単一フレームのGIFとして扱う（実際のGIFアニメーション解析は複雑なため）
+      const arrayBuffer = await response.arrayBuffer();
+
+      // gifuct-jsでGIFを解析
+      const gif = parseGIF(arrayBuffer);
+      const frames = decompressFrames(gif, true);
+
+      const gifFrames: GifFrame[] = [];
+
+      for (const frame of frames) {
+        // フレームデータをCanvasに描画
         const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
+        canvas.width = frame.dims.width;
+        canvas.height = frame.dims.height;
         const ctx = canvas.getContext("2d")!;
-        ctx.drawImage(img, 0, 0);
 
-        resolve([
-          {
-            canvas: canvas,
-            delay: 70 // 約15fps (nonnon.jsのdelay=7 * 10ms)
-          }
-        ]);
-      };
+        // RGBA配列からImageDataを作成
+        const imageData = new ImageData(
+          new Uint8ClampedArray(frame.patch),
+          frame.dims.width,
+          frame.dims.height
+        );
 
-      img.onerror = () => reject(new Error(`Failed to load GIF: ${gifUrl}`));
-      img.src = gifUrl;
-    });
+        ctx.putImageData(imageData, 0, 0);
+
+        gifFrames.push({
+          canvas: canvas,
+          delay: frame.delay || 70 // デフォルト70ms
+        });
+      }
+
+      return gifFrames;
+    } catch (error) {
+      console.error("GIF loading error:", error);
+      throw new Error(`Failed to load GIF frames: ${error}`);
+    }
   }
 
   // 画像にテキストを合成（nonnon.jsのcompo関数相当）

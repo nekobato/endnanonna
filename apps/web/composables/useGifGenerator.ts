@@ -33,11 +33,11 @@ export const useGifGenerator = () => {
 
   // 処理ステップの定義
   const steps = [
-    { name: "フォント読み込み中...", weight: 20 },
-    { name: "Canvas初期化中...", weight: 10 },
-    { name: "ベース画像生成中...", weight: 10 },
+    { name: "フォント読み込み中...", weight: 15 },
+    { name: "Canvas初期化中...", weight: 5 },
+    { name: "ベースGIF分解中...", weight: 15 },
     { name: "文字設定準備中...", weight: 10 },
-    { name: "アニメーションフレーム生成中...", weight: 30 },
+    { name: "アニメーションフレーム生成中...", weight: 35 },
     { name: "GIF合成中...", weight: 15 },
     { name: "最終処理中...", weight: 5 }
   ];
@@ -280,10 +280,13 @@ export const useGifGenerator = () => {
       currentProgress += steps[1].weight;
       progress.value = currentProgress;
 
-      // 3. ベースGIF読み込み
+      // 3. ベースGIF分解
       currentStep.value = steps[2].name;
       const baseGifFrames = await processor.loadGifFrames(
         "/animations/non-base.gif"
+      );
+      console.log(
+        `ベースGIFから ${baseGifFrames.length} フレームを分解しました`
       );
       currentProgress += steps[2].weight;
       progress.value = currentProgress;
@@ -303,12 +306,14 @@ export const useGifGenerator = () => {
       currentStep.value = steps[4].name;
       const animationFrames: AnimationFrame[] = [];
 
-      // ベースGIFフレームを追加
+      // ベースGIFフレームを個別に処理して追加
       for (const baseFrame of baseGifFrames) {
         const canvas = document.createElement("canvas");
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
         const ctx = canvas.getContext("2d")!;
+
+        // ベースフレームを640x360にリサイズして描画
         ctx.drawImage(baseFrame.canvas, 0, 0, canvasWidth, canvasHeight);
 
         animationFrames.push({
@@ -317,86 +322,91 @@ export const useGifGenerator = () => {
         });
       }
 
-      // 連番GIFフレーム（107-200）を処理
-      let heightIndex = 0;
-      for (let frameNum = 107; frameNum <= 200; frameNum++) {
-        const frameUrl = `/animations/non/nonnon${frameNum
-          .toString()
-          .padStart(4, "0")}.gif`;
+      // // 連番GIFフレーム（107-200）を処理
+      // let heightIndex = 0;
+      // for (let frameNum = 107; frameNum <= 200; frameNum++) {
+      //   const frameUrl = `/animations/non/nonnon${frameNum
+      //     .toString()
+      //     .padStart(4, "0")}.gif`;
 
-        try {
-          const frameGifs = await processor.loadGifFrames(frameUrl);
+      //   try {
+      //     // gifuct-jsで各連番GIFを分解
+      //     const frameGifs = await processor.loadGifFrames(frameUrl);
 
-          for (const frameGif of frameGifs) {
-            let compositeCanvas: HTMLCanvasElement;
+      //     for (const frameGif of frameGifs) {
+      //       let compositeCanvas: HTMLCanvasElement;
 
-            if (frameNum >= 107 && frameNum <= 123) {
-              // 文字が徐々に大きくなる部分（nonnon.jsの107-123処理）
-              const textHeight = heights[heightIndex];
+      //       if (frameNum >= 107 && frameNum <= 123) {
+      //         // 文字が徐々に大きくなる部分（nonnon.jsの107-123処理）
+      //         const textHeight = heights[heightIndex];
 
-              // 文字画像を指定の高さにスケール
-              const scaledTextCanvas = document.createElement("canvas");
-              scaledTextCanvas.width = textCanvas.width;
-              scaledTextCanvas.height = textHeight;
-              const scaledCtx = scaledTextCanvas.getContext("2d")!;
-              scaledCtx.drawImage(
-                textCanvas,
-                0,
-                0,
-                textCanvas.width,
-                textHeight
-              );
+      //         // 文字画像を指定の高さにスケール
+      //         const scaledTextCanvas = document.createElement("canvas");
+      //         scaledTextCanvas.width = textCanvas.width;
+      //         scaledTextCanvas.height = textHeight;
+      //         const scaledCtx = scaledTextCanvas.getContext("2d")!;
+      //         scaledCtx.drawImage(
+      //           textCanvas,
+      //           0,
+      //           0,
+      //           textCanvas.width,
+      //           textHeight
+      //         );
 
-              compositeCanvas = await processor.compositeTextOnImage(
-                frameGif.canvas,
-                scaledTextCanvas,
-                textHeight
-              );
-              heightIndex++;
-            } else if (frameNum >= 124) {
-              // 文字サイズ固定部分（nonnon.jsの124-200処理）
-              compositeCanvas = await processor.compositeTextOnImage(
-                frameGif.canvas,
-                textCanvas,
-                heights[heights.length - 1]
-              );
-            } else {
-              // 文字なし
-              compositeCanvas = frameGif.canvas;
-            }
+      //         compositeCanvas = await processor.compositeTextOnImage(
+      //           frameGif.canvas,
+      //           scaledTextCanvas,
+      //           textHeight
+      //         );
 
-            // キャンバスを640x360にリサイズ
-            const resizedCanvas = document.createElement("canvas");
-            resizedCanvas.width = canvasWidth;
-            resizedCanvas.height = canvasHeight;
-            const resizedCtx = resizedCanvas.getContext("2d")!;
-            resizedCtx.drawImage(
-              compositeCanvas,
-              0,
-              0,
-              canvasWidth,
-              canvasHeight
-            );
+      //         // heightIndexは各フレーム番号につき一度だけ増加
+      //         if (frameGifs.indexOf(frameGif) === frameGifs.length - 1) {
+      //           heightIndex++;
+      //         }
+      //       } else if (frameNum >= 124) {
+      //         // 文字サイズ固定部分（nonnon.jsの124-200処理）
+      //         compositeCanvas = await processor.compositeTextOnImage(
+      //           frameGif.canvas,
+      //           textCanvas,
+      //           heights[heights.length - 1]
+      //         );
+      //       } else {
+      //         // 文字なし
+      //         compositeCanvas = frameGif.canvas;
+      //       }
 
-            animationFrames.push({
-              imageData: resizedCtx.getImageData(
-                0,
-                0,
-                canvasWidth,
-                canvasHeight
-              ),
-              delay: frameGif.delay
-            });
-          }
-        } catch (frameError) {
-          console.warn(`フレーム ${frameNum} の読み込みに失敗:`, frameError);
-        }
+      //       // キャンバスを640x360にリサイズ
+      //       const resizedCanvas = document.createElement("canvas");
+      //       resizedCanvas.width = canvasWidth;
+      //       resizedCanvas.height = canvasHeight;
+      //       const resizedCtx = resizedCanvas.getContext("2d")!;
+      //       resizedCtx.drawImage(
+      //         compositeCanvas,
+      //         0,
+      //         0,
+      //         canvasWidth,
+      //         canvasHeight
+      //       );
 
-        // プログレス更新
-        const frameProgress =
-          ((frameNum - 107) / (200 - 107)) * steps[4].weight;
-        progress.value = currentProgress + frameProgress;
-      }
+      //       animationFrames.push({
+      //         imageData: resizedCtx.getImageData(
+      //           0,
+      //           0,
+      //           canvasWidth,
+      //           canvasHeight
+      //         ),
+      //         delay: frameGif.delay
+      //       });
+      //     }
+      //   } catch (frameError) {
+      //     console.warn(`フレーム ${frameNum} の読み込みに失敗:`, frameError);
+      //   }
+
+      //   // プログレス更新
+      //   const frameProgress =
+      //     ((frameNum - 107) / (200 - 107)) * steps[4].weight;
+      //   progress.value = currentProgress + frameProgress;
+      // }
 
       currentProgress += steps[4].weight;
       progress.value = currentProgress;

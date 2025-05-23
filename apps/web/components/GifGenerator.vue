@@ -146,12 +146,6 @@ const elapsedTimeFormatted = computed(() => formatTime(elapsedTime.value));
       <!-- 文字数表示 -->
       <div class="flex justify-between items-center mt-2 text-xs">
         <span class="text-gray-500"> {{ characterCount }}/7文字 </span>
-        <span
-          v-if="characterCount > 0"
-          :class="isValidLength ? 'text-green-500' : 'text-orange-500'"
-        >
-          残り{{ remainingCount }}文字
-        </span>
       </div>
     </div>
 

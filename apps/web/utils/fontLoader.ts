@@ -60,14 +60,9 @@ export class FontLoader {
 // デフォルトのフォント設定（Rounded M+）
 export const DEFAULT_FONTS: FontConfig[] = [
   {
-    family: "Rounded M+ 1c",
-    url: "/assets/fonts/rounded-mplus-1c-bold.woff2",
+    family: "Rounded-X M+ 1m bold",
+    url: "/fonts/rounded-x-mplus-1m-bold.ttf",
     weight: "bold"
-  },
-  {
-    family: "Rounded M+ 1c",
-    url: "/assets/fonts/rounded-mplus-1c-regular.woff2",
-    weight: "normal"
   }
 ];
 
