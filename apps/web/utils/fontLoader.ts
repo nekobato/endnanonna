@@ -29,8 +29,12 @@ export class FontLoader {
 
       console.log(`Font loaded: ${config.family}`);
     } catch (error) {
-      console.error(`Failed to load font: ${config.family}`, error);
-      throw error;
+      console.warn(
+        `Failed to load font: ${config.family}, using fallback fonts`,
+        error
+      );
+      // フォントの読み込みに失敗した場合、フォールバックフォントを使用
+      this.loadedFonts.add(fontKey + "-fallback");
     }
   }
 
@@ -67,6 +71,20 @@ export const DEFAULT_FONTS: FontConfig[] = [
   }
 ];
 
+// フォールバックフォント設定
+export const FALLBACK_FONTS = [
+  "system-ui",
+  "-apple-system",
+  "BlinkMacSystemFont",
+  '"Segoe UI"',
+  "Roboto",
+  '"Helvetica Neue"',
+  "Arial",
+  '"Noto Sans"',
+  '"Liberation Sans"',
+  "sans-serif"
+];
+
 // シングルトンインスタンス
 let fontLoaderInstance: FontLoader | null = null;
 
@@ -89,10 +107,24 @@ export const useFont = () => {
       await fontLoader.loadMultipleFonts(DEFAULT_FONTS);
       loadedFonts.value = fontLoader.getLoadedFonts();
     } catch (error) {
-      console.error("Failed to load default fonts:", error);
+      console.warn("Failed to load default fonts, using system fonts:", error);
+      // システムフォントを使用
+      loadedFonts.value = ["system-fallback"];
     } finally {
       isLoading.value = false;
     }
+  };
+
+  const getFontFamily = (): string => {
+    const hasRoundedMPlus = loadedFonts.value.some((font) =>
+      font.includes("Rounded M+ 1c")
+    );
+
+    if (hasRoundedMPlus) {
+      return '"Rounded M+ 1c", ' + FALLBACK_FONTS.join(", ");
+    }
+
+    return FALLBACK_FONTS.join(", ");
   };
 
   const loadCustomFont = async (config: FontConfig): Promise<void> => {
@@ -110,6 +142,7 @@ export const useFont = () => {
   return {
     loadDefaultFonts,
     loadCustomFont,
+    getFontFamily,
     isLoading: readonly(isLoading),
     loadedFonts: readonly(loadedFonts),
     fontLoader

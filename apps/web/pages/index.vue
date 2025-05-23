@@ -11,38 +11,21 @@ useSeoMeta({
 });
 
 // 状態管理
-const inputText = ref("");
-const isGenerating = ref(false);
 const generatedGif = ref<string | null>(null);
 const errorMessage = ref("");
-
-// Composables
-const { validateText } = useTextValidator();
-const { generateGif, isLoading, progress } = useGifGenerator();
 
 // フォント読み込み
 const { loadDefaultFonts } = useFont();
 
-// 生成処理
-const handleGenerate = async () => {
+// イベントハンドラー
+const handleGifGenerated = (gifUrl: string) => {
+  generatedGif.value = gifUrl;
   errorMessage.value = "";
+};
 
-  const validation = validateText(inputText.value);
-  if (!validation.isValid) {
-    errorMessage.value = validation.error || "エラーが発生しました";
-    return;
-  }
-
-  try {
-    await generateGif({
-      text: inputText.value,
-      mini: false
-    });
-    // TODO: 生成されたGIFのURLを設定
-  } catch (error) {
-    console.error("GIF生成エラー:", error);
-    errorMessage.value = "GIF生成に失敗しました";
-  }
+const handleError = (error: string) => {
+  errorMessage.value = error;
+  generatedGif.value = null;
 };
 
 // 初期化
@@ -69,74 +52,8 @@ onMounted(async () => {
       </header>
 
       <!-- メインコンテンツ -->
-      <main class="space-y-6">
-        <!-- 文字入力 -->
-        <div>
-          <label
-            for="text-input"
-            class="block text-sm font-medium text-gray-700 mb-2"
-          >
-            7文字の日本語を入力してください
-          </label>
-          <TextInput
-            v-model="inputText"
-            placeholder="のんのんびより"
-            :max-length="7"
-          />
-          <div
-            class="flex justify-between items-center mt-2 text-xs text-gray-500"
-          >
-            <span>{{ inputText.length }}/7文字</span>
-            <span v-if="inputText.length > 0" class="text-green-500">
-              残り{{ 7 - inputText.length }}文字
-            </span>
-          </div>
-        </div>
-
-        <!-- エラーメッセージ -->
-        <div
-          v-if="errorMessage"
-          class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg"
-        >
-          {{ errorMessage }}
-        </div>
-
-        <!-- 生成ボタン -->
-        <button
-          @click="handleGenerate"
-          :disabled="isLoading || inputText.length !== 7"
-          class="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <span v-if="!isLoading">GIF生成</span>
-          <span v-else class="flex items-center justify-center">
-            <div class="spinner mr-2"></div>
-            生成中...
-          </span>
-        </button>
-
-        <!-- プログレス表示 -->
-        <div v-if="isLoading" class="space-y-2">
-          <div class="w-full bg-gray-200 rounded-full h-2">
-            <div
-              class="bg-gradient-to-r from-pink-500 to-orange-500 h-2 rounded-full transition-all duration-300"
-              :style="{ width: `${progress}%` }"
-            ></div>
-          </div>
-          <p class="text-center text-sm text-gray-600">{{ progress }}% 完了</p>
-        </div>
-
-        <!-- 生成結果 -->
-        <div v-if="generatedGif" class="text-center space-y-4">
-          <img
-            :src="generatedGif"
-            alt="生成されたGIF"
-            class="mx-auto rounded-lg shadow-lg max-w-full"
-          />
-          <div class="flex space-x-2">
-            <button class="btn-secondary flex-1">ダウンロード</button>
-            <button class="btn-secondary flex-1">もう一度生成</button>
-          </div>
-        </div>
+      <main>
+        <GifGenerator @generated="handleGifGenerated" @error="handleError" />
       </main>
 
       <!-- フッター -->
