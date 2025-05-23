@@ -11,6 +11,11 @@ export interface AnimationFrame {
   delay: number;
 }
 
+export interface GifFrame {
+  canvas: HTMLCanvasElement;
+  delay: number;
+}
+
 export class CanvasImageProcessor {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
@@ -169,6 +174,76 @@ export class CanvasImageProcessor {
 
   getContext(): CanvasRenderingContext2D {
     return this.ctx;
+  }
+  // GIF画像を読み込んでフレームを取得
+  async loadGifFrames(gifUrl: string): Promise<GifFrame[]> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+
+      img.onload = () => {
+        // 単一フレームのGIFとして扱う（実際のGIFアニメーション解析は複雑なため）
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d")!;
+        ctx.drawImage(img, 0, 0);
+
+        resolve([
+          {
+            canvas: canvas,
+            delay: 70 // 約15fps (nonnon.jsのdelay=7 * 10ms)
+          }
+        ]);
+      };
+
+      img.onerror = () => reject(new Error(`Failed to load GIF: ${gifUrl}`));
+      img.src = gifUrl;
+    });
+  }
+
+  // 画像にテキストを合成（nonnon.jsのcompo関数相当）
+  async compositeTextOnImage(
+    baseCanvas: HTMLCanvasElement,
+    textCanvas: HTMLCanvasElement,
+    textHeight?: number
+  ): Promise<HTMLCanvasElement> {
+    const canvas = document.createElement("canvas");
+    canvas.width = baseCanvas.width;
+    canvas.height = baseCanvas.height;
+    const ctx = canvas.getContext("2d")!;
+
+    // ベース画像を描画
+    ctx.drawImage(baseCanvas, 0, 0);
+
+    // nonnon.jsのcompo関数の位置計算: +5+${72 - height / 2}
+    const x = 5;
+    const y = textHeight ? 72 - textHeight / 2 : 72;
+
+    // テキスト画像を中央に配置して合成
+    ctx.save();
+    ctx.globalCompositeOperation = "source-over";
+
+    if (textHeight) {
+      // 高さを調整してテキストを描画
+      const scaledCanvas = document.createElement("canvas");
+      scaledCanvas.width = textCanvas.width;
+      scaledCanvas.height = textHeight;
+      const scaledCtx = scaledCanvas.getContext("2d")!;
+      scaledCtx.drawImage(textCanvas, 0, 0, textCanvas.width, textHeight);
+
+      // 中央配置で合成
+      const centerX = (canvas.width - scaledCanvas.width) / 2 + x;
+      ctx.drawImage(scaledCanvas, centerX, y);
+    } else {
+      // 中央配置で合成
+      const centerX = (canvas.width - textCanvas.width) / 2 + x;
+      ctx.drawImage(textCanvas, centerX, y);
+    }
+
+    ctx.restore();
+
+    return canvas;
   }
 }
 

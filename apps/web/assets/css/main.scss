@@ -98,6 +98,114 @@ body {
   100% { transform: rotate(360deg); }
 }
 
+// 新しいアニメーション
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 6s ease-in-out infinite 2s;
+}
+
+.animate-drift {
+  animation: drift 20s linear infinite;
+}
+
+.animate-drift-reverse {
+  animation: drift-reverse 25s linear infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+.animate-twinkle {
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+.animate-twinkle-delayed {
+  animation: twinkle 2s ease-in-out infinite 1s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+@keyframes drift {
+  0% { transform: translateX(-100px); }
+  100% { transform: translateX(calc(100vw + 100px)); }
+}
+
+@keyframes drift-reverse {
+  0% { transform: translateX(calc(100vw + 100px)); }
+  100% { transform: translateX(-100px); }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+// プログレスバーのアニメーション
+.progress-shimmer {
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    animation: shimmer 2s infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+// ホバーエフェクト強化
+.btn-primary, .btn-secondary {
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+  
+  &:hover::before {
+    left: 100%;
+  }
+}
+
 // レスポンシブ対応
 @media (max-width: 768px) {
   .card {
@@ -106,5 +214,37 @@ body {
   
   .input-field {
     font-size: 1rem;
+  }
+  
+  // モバイルでアニメーションを軽量化
+  .animate-float,
+  .animate-float-delayed {
+    animation-duration: 8s;
+  }
+  
+  .animate-drift,
+  .animate-drift-reverse {
+    animation-duration: 30s;
+  }
+}
+
+// ダークモード対応（将来の拡張用）
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-pink: #ff6b9d;
+    --color-orange: #ffa726;
+    --color-green: #66bb6a;
+    --color-blue: #42a5f5;
+  }
+}
+
+// アクセシビリティ: アニメーション無効化設定
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
