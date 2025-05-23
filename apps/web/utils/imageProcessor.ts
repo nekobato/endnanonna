@@ -13,8 +13,10 @@ export interface AnimationFrame {
 }
 
 export interface GifFrame {
-  canvas: HTMLCanvasElement;
+  imageData: ImageData;
   delay: number;
+  width: number;
+  height: number;
 }
 
 export class CanvasImageProcessor {
@@ -95,11 +97,8 @@ export class CanvasImageProcessor {
 
       // 各フレームをGIFに追加
       frames.forEach((frame) => {
-        // ImageDataをCanvasに描画
-        this.ctx.putImageData(frame.imageData, 0, 0);
-
         // CanvasをGIFフレームとして追加
-        gif.addFrame(this.canvas, { delay: frame.delay });
+        gif.addFrame(frame.imageData, { delay: frame.delay });
       });
 
       gif.on("finished", (blob: Blob) => {
@@ -126,7 +125,7 @@ export class CanvasImageProcessor {
       fontFamily?: string;
     }>,
     frameCount: number = 30,
-    frameDelay: number = 100
+    frameDelay: number = 70
   ): Promise<AnimationFrame[]> {
     const frames: AnimationFrame[] = [];
 
@@ -194,12 +193,6 @@ export class CanvasImageProcessor {
       const gifFrames: GifFrame[] = [];
 
       for (const frame of frames) {
-        // フレームデータをCanvasに描画
-        const canvas = document.createElement("canvas");
-        canvas.width = frame.dims.width;
-        canvas.height = frame.dims.height;
-        const ctx = canvas.getContext("2d")!;
-
         // RGBA配列からImageDataを作成
         const imageData = new ImageData(
           new Uint8ClampedArray(frame.patch),
@@ -207,11 +200,11 @@ export class CanvasImageProcessor {
           frame.dims.height
         );
 
-        ctx.putImageData(imageData, 0, 0);
-
         gifFrames.push({
-          canvas: canvas,
-          delay: frame.delay || 70 // デフォルト70ms
+          imageData: imageData,
+          delay: frame.delay || 70, // デフォルト70ms
+          width: frame.dims.width,
+          height: frame.dims.height
         });
       }
 
@@ -263,6 +256,16 @@ export class CanvasImageProcessor {
 
     ctx.restore();
 
+    return canvas;
+  }
+
+  // GifFrameからCanvasを作成するヘルパーメソッド
+  createCanvasFromGifFrame(gifFrame: GifFrame): HTMLCanvasElement {
+    const canvas = document.createElement("canvas");
+    canvas.width = gifFrame.width;
+    canvas.height = gifFrame.height;
+    const ctx = canvas.getContext("2d")!;
+    ctx.putImageData(gifFrame.imageData, 0, 0);
     return canvas;
   }
 }
