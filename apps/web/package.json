@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "endnanonna",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,8 +13,12 @@
     "@nuxt/eslint": "1.4.1",
     "@nuxt/image": "1.10.0",
     "@nuxtjs/robots": "5.2.8",
+    "@nuxtjs/tailwindcss": "^6.12.1",
+    "@pinia/nuxt": "^0.5.5",
     "eslint": "^9.0.0",
+    "gif.js": "^0.2.0",
     "nuxt": "^3.17.4",
+    "pinia": "^2.2.6",
     "vue": "^3.5.14",
     "vue-router": "^4.5.1",
     "sass-embedded": "^1.85.1"
