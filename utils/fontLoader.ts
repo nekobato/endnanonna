@@ -112,11 +112,11 @@ export const useFont = () => {
 
   const getFontFamily = (): string => {
     const hasRoundedMPlus = loadedFonts.value.some((font) =>
-      font.includes("Rounded M+ 1c")
+      font.includes("Rounded-X M+ 1m bold")
     );
 
     if (hasRoundedMPlus) {
-      return '"Rounded M+ 1c", ' + FALLBACK_FONTS.join(", ");
+      return '"Rounded-X M+ 1m bold", ' + FALLBACK_FONTS.join(", ");
     }
 
     return FALLBACK_FONTS.join(", ");

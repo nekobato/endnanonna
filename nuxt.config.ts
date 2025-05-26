@@ -3,5 +3,10 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
   devtools: { enabled: true },
   modules: ["@nuxt/image", "@nuxtjs/tailwindcss", "@pinia/nuxt"],
-  css: ["~/assets/css/main.scss"]
+  css: ["~/assets/css/main.scss"],
+  app: {
+    head: {
+      meta: [{ name: "robots", content: "noindex, nofollow" }]
+    }
+  }
 });
