@@ -141,10 +141,11 @@ export class CanvasImageProcessor {
         this.ctx.save();
         this.ctx.translate(config.x, config.y);
         this.ctx.rotate((config.rotate * Math.PI) / 180);
-        this.ctx.scale(scale, scale);
 
+        // scale()変換を使わず、直接フォントサイズを調整して位置ずれを防ぐ
+        const scaledSize = Math.round(config.size * scale);
         const fontFamily = config.fontFamily || '"Rounded M+ 1c", sans-serif';
-        this.ctx.font = `bold ${config.size}px ${fontFamily}`;
+        this.ctx.font = `bold ${scaledSize}px ${fontFamily}`;
         this.ctx.fillStyle = config.fill;
         this.ctx.textAlign = "center";
         this.ctx.textBaseline = "middle";
@@ -229,29 +230,77 @@ export class CanvasImageProcessor {
     // ベース画像を描画
     ctx.drawImage(baseCanvas, 0, 0);
 
-    // nonnon.jsのcompo関数の位置計算: +5+${72 - height / 2}
-    const x = 5;
-    const y = textHeight ? 72 - textHeight / 2 : 72;
-
     // テキスト画像を中央に配置して合成
     ctx.save();
     ctx.globalCompositeOperation = "source-over";
 
-    if (textHeight) {
-      // 高さを調整してテキストを描画
-      const scaledCanvas = document.createElement("canvas");
-      scaledCanvas.width = textCanvas.width;
-      scaledCanvas.height = textHeight;
-      const scaledCtx = scaledCanvas.getContext("2d")!;
-      scaledCtx.drawImage(textCanvas, 0, 0, textCanvas.width, textHeight);
+    if (textHeight && textHeight < textCanvas.height) {
+      // 文字が後ろから起き上がるような3D変形を適用
+      const progress = textHeight / textCanvas.height; // 0から1の進行度
 
-      // 中央配置で合成
-      const centerX = (canvas.width - scaledCanvas.width) / 2 + x;
-      ctx.drawImage(scaledCanvas, centerX, y);
+      // 変形用の一時キャンバスを作成
+      const transformCanvas = document.createElement("canvas");
+      transformCanvas.width = textCanvas.width;
+      transformCanvas.height = textCanvas.height;
+      const transformCtx = transformCanvas.getContext("2d")!;
+
+      // 中心位置を計算
+      const centerX = baseCanvas.width / 2;
+      const centerY = baseCanvas.height / 2 + 30;
+
+      // 透視変換のパラメータ
+      const perspective = 800; // 視点の距離
+      const rotationX = (1 - progress) * 70; // X軸周りの回転角度（度）
+      const rotationRad = (rotationX * Math.PI) / 180;
+
+      // 各行ごとに変形を適用
+      for (let y = 0; y < textCanvas.height; y++) {
+        // Y位置に基づいた変形率を計算（上部ほど変形が大きい）
+        const yRatio = y / textCanvas.height;
+
+        // 透視投影による変形
+        const z = yRatio * perspective * Math.sin(rotationRad);
+        const scale = perspective / (perspective + z);
+        const yOffset =
+          yRatio * textCanvas.height * (1 - Math.cos(rotationRad));
+
+        // 変形後の位置とサイズ
+        const destY = y * scale - yOffset * progress;
+        const destHeight = 1 * scale;
+
+        // 横方向のスケールも調整（奥行き感を出すため）
+        const destWidth = textCanvas.width * scale;
+        const destX = (textCanvas.width - destWidth) / 2;
+
+        // 1行分を描画
+        transformCtx.drawImage(
+          textCanvas,
+          0,
+          y,
+          textCanvas.width,
+          1,
+          destX,
+          destY,
+          destWidth,
+          destHeight
+        );
+      }
+
+      // 変形したキャンバスを本体に描画
+      ctx.drawImage(
+        transformCanvas,
+        centerX - textCanvas.width / 2,
+        centerY - textCanvas.height / 2
+      );
     } else {
-      // 中央配置で合成
-      const centerX = (canvas.width - textCanvas.width) / 2 + x;
-      ctx.drawImage(textCanvas, centerX, y);
+      // 通常の描画（変形なし）
+      const centerX = baseCanvas.width / 2;
+      const centerY = baseCanvas.height / 2 + 30;
+      ctx.drawImage(
+        textCanvas,
+        centerX - textCanvas.width / 2,
+        centerY - textCanvas.height / 2
+      );
     }
 
     ctx.restore();

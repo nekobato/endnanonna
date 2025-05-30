@@ -19,7 +19,7 @@ export default {
         }
       },
       fontFamily: {
-        rounded: ['"Rounded-X M+ 1m bold"', "sans-serif"]
+        rounded: ['"Natsuzemi Maru Gothic"', "sans-serif"]
       },
       animation: {
         "gradient-shift": "gradientShift 15s ease infinite",

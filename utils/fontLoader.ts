@@ -5,6 +5,9 @@ export interface FontConfig {
   style?: string;
 }
 
+const nonnonFont = "Natsuzemi Maru Gothic";
+const nonnonFontPath = "/fonts/natsuzemi-maru-gothic.ttf";
+
 export class FontLoader {
   private loadedFonts: Set<string> = new Set();
 
@@ -60,8 +63,8 @@ export class FontLoader {
 // デフォルトのフォント設定（Rounded M+）
 export const DEFAULT_FONTS: FontConfig[] = [
   {
-    family: "Rounded-X M+ 1m bold",
-    url: "/fonts/rounded-x-mplus-1m-bold.ttf",
+    family: nonnonFont,
+    url: nonnonFontPath,
     weight: "bold"
   }
 ];
@@ -112,11 +115,15 @@ export const useFont = () => {
 
   const getFontFamily = (): string => {
     const hasRoundedMPlus = loadedFonts.value.some((font) =>
-      font.includes("Rounded-X M+ 1m bold")
+      font.includes(nonnonFont)
     );
 
     if (hasRoundedMPlus) {
-      return '"Rounded-X M+ 1m bold", ' + FALLBACK_FONTS.join(", ");
+      console.log(
+        "Using custom font:",
+        [nonnonFont, ...FALLBACK_FONTS].join(", ")
+      );
+      return [`"${nonnonFont}"`, ...FALLBACK_FONTS].join(", ");
     }
 
     return FALLBACK_FONTS.join(", ");

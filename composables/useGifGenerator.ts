@@ -15,6 +15,7 @@ export interface MojiConfig {
   rotate: number[];
   fill: string[];
   geo: string[];
+  heightScale: number[];
 }
 
 export interface TextPosition {
@@ -44,8 +45,8 @@ export const useGifGenerator = () => {
 
   // 文字ごとの設定（nonnon.jsから）
   const mojiConfig: MojiConfig = {
-    size: [80, 64, 78, 54, 54, 64, 68],
-    rotate: [-12, -2, -10, -10, -10, -10, 10],
+    size: [80, 70, 72, 54, 54, 64, 72],
+    rotate: [-12, -2, -10, 6, -8, -14, 10],
     fill: [
       "#dd188b",
       "#dd188b",
@@ -55,7 +56,16 @@ export const useGifGenerator = () => {
       "#12a7c5",
       "#12a7c5"
     ],
-    geo: ["+0+0", "+70+10", "+120+0", "+180+0", "+230+0", "+280+0", "+335+0"]
+    geo: [
+      "+0+0",
+      "+70+75",
+      "+132+45",
+      "+200+70",
+      "+245+75",
+      "+286+34",
+      "+335+10"
+    ],
+    heightScale: [2, 1, 1.2, 1.2, 1.2, 1.6, 2]
   };
 
   // 文字の高さ変化（nonnon.jsのheights配列）
@@ -182,41 +192,29 @@ export const useGifGenerator = () => {
         fontFamily
       );
 
-      // nonnon.jsの特別処理：最初、最後から2番目、最後の文字は高さを1.6倍に拡張
-      if (i === 0 || i === chars.length - 2 || i === chars.length - 1) {
-        const expandedCanvas = document.createElement("canvas");
-        expandedCanvas.width = charCanvas.width;
-        expandedCanvas.height = Math.floor(mojiConfig.size[i] * 1.6);
-        const expandedCtx = expandedCanvas.getContext("2d")!;
-        expandedCtx.drawImage(
-          charCanvas,
-          0,
-          0,
-          charCanvas.width,
-          expandedCanvas.height
-        );
+      const expandedCanvas = document.createElement("canvas");
+      expandedCanvas.width = charCanvas.width;
+      expandedCanvas.height = Math.floor(
+        mojiConfig.size[i] * mojiConfig.heightScale[i]
+      );
+      const expandedCtx = expandedCanvas.getContext("2d")!;
+      expandedCtx.drawImage(
+        charCanvas,
+        0,
+        0,
+        charCanvas.width,
+        expandedCanvas.height
+      );
 
-        if (i === 0) {
-          // 最初の文字でベースキャンバスを作成（ground処理）
-          baseCanvas = document.createElement("canvas");
-          baseCanvas.width = splice + 100;
-          baseCanvas.height = 200;
-          const baseCtx = baseCanvas.getContext("2d")!;
-          baseCtx.drawImage(expandedCanvas, 0, 0);
-        } else {
-          // geo文字列をパース（例: '+70+10' -> x=70, y=10）
-          const geo = mojiConfig.geo[i];
-          const matches = geo.match(/\+(\d+)\+(\d+)/);
-          const x = matches ? parseInt(matches[1]) : 0;
-          const y = matches ? parseInt(matches[2]) : 0;
-
-          if (baseCanvas) {
-            const baseCtx = baseCanvas.getContext("2d")!;
-            baseCtx.drawImage(expandedCanvas, x, y);
-          }
-        }
+      if (i === 0) {
+        // 最初の文字でベースキャンバスを作成（ground処理）
+        baseCanvas = document.createElement("canvas");
+        baseCanvas.width = splice + 100;
+        baseCanvas.height = 200;
+        const baseCtx = baseCanvas.getContext("2d")!;
+        baseCtx.drawImage(expandedCanvas, 0, 0);
       } else {
-        // 通常の文字の配置（append処理）
+        // geo文字列をパース（例: '+70+10' -> x=70, y=10）
         const geo = mojiConfig.geo[i];
         const matches = geo.match(/\+(\d+)\+(\d+)/);
         const x = matches ? parseInt(matches[1]) : 0;
@@ -224,7 +222,7 @@ export const useGifGenerator = () => {
 
         if (baseCanvas) {
           const baseCtx = baseCanvas.getContext("2d")!;
-          baseCtx.drawImage(charCanvas, x, y);
+          baseCtx.drawImage(expandedCanvas, x, y);
         }
       }
     }
@@ -307,21 +305,21 @@ export const useGifGenerator = () => {
       const animationFrames: AnimationFrame[] = [];
 
       // ベースGIFフレームを個別に処理して追加
-      for (const baseFrame of baseGifFrames) {
-        const canvas = document.createElement("canvas");
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-        const ctx = canvas.getContext("2d")!;
+      // for (const baseFrame of baseGifFrames) {
+      //   const canvas = document.createElement("canvas");
+      //   canvas.width = canvasWidth;
+      //   canvas.height = canvasHeight;
+      //   const ctx = canvas.getContext("2d")!;
 
-        // GifFrameからCanvasを作成してリサイズして描画
-        const frameCanvas = processor.createCanvasFromGifFrame(baseFrame);
-        ctx.drawImage(frameCanvas, 0, 0, canvasWidth, canvasHeight);
+      //   // GifFrameからCanvasを作成してリサイズして描画
+      //   const frameCanvas = processor.createCanvasFromGifFrame(baseFrame);
+      //   ctx.drawImage(frameCanvas, 0, 0, canvasWidth, canvasHeight);
 
-        animationFrames.push({
-          imageData: ctx.getImageData(0, 0, canvasWidth, canvasHeight),
-          delay: baseFrame.delay
-        });
-      }
+      //   animationFrames.push({
+      //     imageData: ctx.getImageData(0, 0, canvasWidth, canvasHeight),
+      //     delay: baseFrame.delay
+      //   });
+      // }
 
       // 連番GIFフレーム（107-200）を処理
       let heightIndex = 0;
@@ -366,11 +364,23 @@ export const useGifGenerator = () => {
                 heightIndex++;
               }
             } else if (frameNum >= 124) {
+              // 文字画像を指定の高さにスケール
+              const scaledTextCanvas = document.createElement("canvas");
+              scaledTextCanvas.width = textCanvas.width;
+              scaledTextCanvas.height = heights[heights.length - 1];
+              const scaledCtx = scaledTextCanvas.getContext("2d")!;
+              scaledCtx.drawImage(
+                textCanvas,
+                0,
+                0,
+                textCanvas.width,
+                heights[heights.length - 1]
+              );
               // 文字サイズ固定部分（nonnon.jsの124-200処理）
               const frameCanvas = processor.createCanvasFromGifFrame(frameGif);
               compositeCanvas = await processor.compositeTextOnImage(
                 frameCanvas,
-                textCanvas,
+                scaledTextCanvas,
                 heights[heights.length - 1]
               );
             } else {

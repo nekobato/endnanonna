@@ -113,7 +113,7 @@ export const useCanvasRenderer = () => {
     const fontFamily = config.fontFamily || '"Rounded M+ 1c", sans-serif';
     ctx.font = `bold ${config.size}px ${fontFamily}`;
     ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    ctx.textBaseline = "bottom";
 
     // 影の設定
     if (config.shadow) {
