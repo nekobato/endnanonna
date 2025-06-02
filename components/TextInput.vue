@@ -25,6 +25,7 @@ const emit = defineEmits<Emits>();
 
 const inputRef = ref<HTMLInputElement>();
 const isFocused = ref(false);
+const isComposing = ref(false);
 
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
@@ -41,9 +42,20 @@ const handleBlur = () => {
   emit("blur");
 };
 
+const handleCompositionStart = () => {
+  isComposing.value = true;
+};
+
+const handleCompositionEnd = () => {
+  isComposing.value = false;
+};
+
 const handleKeydown = (event: KeyboardEvent) => {
   if (event.key === "Enter") {
-    emit("enter");
+    // IMEで変換中でなく、かつ7文字の場合のみsubmit
+    if (!isComposing.value && props.modelValue.length === props.maxLength) {
+      emit("enter");
+    }
   }
 };
 
@@ -95,6 +107,8 @@ defineExpose({ focus });
         @focus="handleFocus"
         @blur="handleBlur"
         @keydown="handleKeydown"
+        @compositionstart="handleCompositionStart"
+        @compositionend="handleCompositionEnd"
         type="text"
         autocomplete="off"
         spellcheck="false"

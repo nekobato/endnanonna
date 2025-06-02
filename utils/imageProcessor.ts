@@ -220,7 +220,7 @@ export class CanvasImageProcessor {
   async compositeTextOnImage(
     baseCanvas: HTMLCanvasElement,
     textCanvas: HTMLCanvasElement,
-    textHeight?: number
+    maxHeight?: number
   ): Promise<HTMLCanvasElement> {
     const canvas = document.createElement("canvas");
     canvas.width = baseCanvas.width;
@@ -234,68 +234,22 @@ export class CanvasImageProcessor {
     ctx.save();
     ctx.globalCompositeOperation = "source-over";
 
-    if (textHeight && textHeight < textCanvas.height) {
-      // 文字が後ろから起き上がるような3D変形を適用
-      const progress = textHeight / textCanvas.height; // 0から1の進行度
+    // 中心位置を計算
+    const centerX = baseCanvas.width / 2;
+    const centerY = baseCanvas.height / 2 + 30;
 
-      // 変形用の一時キャンバスを作成
-      const transformCanvas = document.createElement("canvas");
-      transformCanvas.width = textCanvas.width;
-      transformCanvas.height = textCanvas.height;
-      const transformCtx = transformCanvas.getContext("2d")!;
+    if (maxHeight && textCanvas.height < maxHeight) {
+      // 起き上がりアニメーション：下端を基準に配置
+      // maxHeightの領域の下端にtextCanvasの下端を合わせる
+      const yOffset = maxHeight - textCanvas.height;
 
-      // 中心位置を計算
-      const centerX = baseCanvas.width / 2;
-      const centerY = baseCanvas.height / 2 + 30;
-
-      // 透視変換のパラメータ
-      const perspective = 800; // 視点の距離
-      const rotationX = (1 - progress) * 70; // X軸周りの回転角度（度）
-      const rotationRad = (rotationX * Math.PI) / 180;
-
-      // 各行ごとに変形を適用
-      for (let y = 0; y < textCanvas.height; y++) {
-        // Y位置に基づいた変形率を計算（上部ほど変形が大きい）
-        const yRatio = y / textCanvas.height;
-
-        // 透視投影による変形
-        const z = yRatio * perspective * Math.sin(rotationRad);
-        const scale = perspective / (perspective + z);
-        const yOffset =
-          yRatio * textCanvas.height * (1 - Math.cos(rotationRad));
-
-        // 変形後の位置とサイズ
-        const destY = y * scale - yOffset * progress;
-        const destHeight = 1 * scale;
-
-        // 横方向のスケールも調整（奥行き感を出すため）
-        const destWidth = textCanvas.width * scale;
-        const destX = (textCanvas.width - destWidth) / 2;
-
-        // 1行分を描画
-        transformCtx.drawImage(
-          textCanvas,
-          0,
-          y,
-          textCanvas.width,
-          1,
-          destX,
-          destY,
-          destWidth,
-          destHeight
-        );
-      }
-
-      // 変形したキャンバスを本体に描画
       ctx.drawImage(
-        transformCanvas,
+        textCanvas,
         centerX - textCanvas.width / 2,
-        centerY - textCanvas.height / 2
+        centerY - maxHeight / 2 + yOffset
       );
     } else {
-      // 通常の描画（変形なし）
-      const centerX = baseCanvas.width / 2;
-      const centerY = baseCanvas.height / 2 + 30;
+      // 通常の描画（最大高さに達している場合）
       ctx.drawImage(
         textCanvas,
         centerX - textCanvas.width / 2,

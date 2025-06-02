@@ -232,6 +232,29 @@ export const useGifGenerator = () => {
       ctx.drawImage(baseCanvas, 0, 0);
     }
 
+    // 文字の実際のサイズに合わせてトリミング
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const { left, top, right, bottom } = getTrimBounds(imageData);
+
+    if (left < right && top < bottom) {
+      const trimmedCanvas = document.createElement("canvas");
+      trimmedCanvas.width = right - left;
+      trimmedCanvas.height = bottom - top;
+      const trimmedCtx = trimmedCanvas.getContext("2d")!;
+      trimmedCtx.drawImage(
+        canvas,
+        left,
+        top,
+        right - left,
+        bottom - top,
+        0,
+        0,
+        right - left,
+        bottom - top
+      );
+      return trimmedCanvas;
+    }
+
     return canvas;
   };
 
@@ -356,7 +379,7 @@ export const useGifGenerator = () => {
               compositeCanvas = await processor.compositeTextOnImage(
                 frameCanvas,
                 scaledTextCanvas,
-                textHeight
+                heights[heights.length - 1] // 最終的な高さ（135）を渡す
               );
 
               // heightIndexは各フレーム番号につき一度だけ増加
@@ -381,7 +404,7 @@ export const useGifGenerator = () => {
               compositeCanvas = await processor.compositeTextOnImage(
                 frameCanvas,
                 scaledTextCanvas,
-                heights[heights.length - 1]
+                heights[heights.length - 1] // 最終的な高さ（135）を渡す
               );
             } else {
               // 文字なし
