@@ -327,21 +327,21 @@ export const useGifGenerator = () => {
       const animationFrames: AnimationFrame[] = [];
 
       // ベースGIFフレームを個別に処理して追加
-      // for (const baseFrame of baseGifFrames) {
-      //   const canvas = document.createElement("canvas");
-      //   canvas.width = canvasWidth;
-      //   canvas.height = canvasHeight;
-      //   const ctx = canvas.getContext("2d")!;
+      for (const baseFrame of baseGifFrames) {
+        const canvas = document.createElement("canvas");
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        const ctx = canvas.getContext("2d")!;
 
-      //   // GifFrameからCanvasを作成してリサイズして描画
-      //   const frameCanvas = processor.createCanvasFromGifFrame(baseFrame);
-      //   ctx.drawImage(frameCanvas, 0, 0, canvasWidth, canvasHeight);
+        // GifFrameからCanvasを作成してリサイズして描画
+        const frameCanvas = processor.createCanvasFromGifFrame(baseFrame);
+        ctx.drawImage(frameCanvas, 0, 0, canvasWidth, canvasHeight);
 
-      //   animationFrames.push({
-      //     imageData: ctx.getImageData(0, 0, canvasWidth, canvasHeight),
-      //     delay: baseFrame.delay
-      //   });
-      // }
+        animationFrames.push({
+          imageData: ctx.getImageData(0, 0, canvasWidth, canvasHeight),
+          delay: baseFrame.delay
+        });
+      }
 
       // 連番GIFフレーム（107-200）を処理
       let heightIndex = 0;
