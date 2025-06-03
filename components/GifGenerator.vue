@@ -48,38 +48,13 @@ const handleGenerate = async () => {
 
   try {
     await generateGif({
-      text: inputText.value,
-      mini: false
+      text: inputText.value
     });
 
     // 生成完了後、currentGifが更新される
   } catch (error) {
     console.error("GIF生成エラー:", error);
     errorMessage.value = "GIF生成に失敗しました";
-    emit("error", errorMessage.value);
-  }
-};
-
-// ミニサイズ生成
-const handleGenerateMini = async () => {
-  errorMessage.value = "";
-  clearGif();
-
-  const validation = validateText(inputText.value);
-  if (!validation.isValid) {
-    errorMessage.value = validation.error || "エラーが発生しました";
-    emit("error", errorMessage.value);
-    return;
-  }
-
-  try {
-    await generateGif({
-      text: inputText.value,
-      mini: true
-    });
-  } catch (error) {
-    console.error("ミニGIF生成エラー:", error);
-    errorMessage.value = "ミニGIF生成に失敗しました";
     emit("error", errorMessage.value);
   }
 };
@@ -199,25 +174,13 @@ const elapsedTimeFormatted = computed(() => formatTime(elapsedTime.value));
     </Transition>
 
     <!-- 生成ボタン -->
-    <div class="space-y-3">
+    <div>
       <button
         @click="handleGenerate"
         :disabled="isLoading || !isValidLength"
         class="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <span v-if="!isLoading">通常サイズGIF生成</span>
-        <span v-else class="flex items-center justify-center">
-          <LoadingSpinner class="mr-2" />
-          生成中...
-        </span>
-      </button>
-
-      <button
-        @click="handleGenerateMini"
-        :disabled="isLoading || !isValidLength"
-        class="btn-secondary w-full disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        <span v-if="!isLoading">ミニサイズGIF生成</span>
+        <span v-if="!isLoading">GIF生成</span>
         <span v-else class="flex items-center justify-center">
           <LoadingSpinner class="mr-2" />
           生成中...

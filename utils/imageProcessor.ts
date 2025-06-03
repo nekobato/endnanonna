@@ -236,7 +236,7 @@ export class CanvasImageProcessor {
 
     // 中心位置を計算
     const centerX = baseCanvas.width / 2;
-    const centerY = baseCanvas.height / 2 + 30;
+    const centerY = baseCanvas.height / 2 + 10;
 
     if (maxHeight && textCanvas.height < maxHeight) {
       // 起き上がりアニメーション：下端を基準に配置

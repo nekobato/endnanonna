@@ -7,7 +7,6 @@ import { useFont } from "~/utils/fontLoader";
 
 export interface GifConfig {
   text: string;
-  mini?: boolean;
 }
 
 export interface MojiConfig {
@@ -267,7 +266,7 @@ export const useGifGenerator = () => {
     elapsedTime.value = 0;
 
     const startTime = Date.now();
-    estimatedTime.value = config.mini ? 30000 : 60000;
+    estimatedTime.value = 60000;
 
     const timeInterval = setInterval(() => {
       elapsedTime.value = Date.now() - startTime;

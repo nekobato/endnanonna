@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 // SEO設定
 useSeoMeta({
-  title: "End-nanonna - のんのんびより風GIF生成",
+  title: "えんどなのんな - のんのんびより風GIF生成",
   description:
     "アニメ「のんのんびより」のエンディングテーマ風のアニメーションGIFを生成するWebアプリケーション",
-  ogTitle: "End-nanonna",
+  ogTitle: "えんどなのんな",
   ogDescription: "のんのんびより風GIF生成アプリ",
   ogImage: "/og-image.png",
   twitterCard: "summary_large_image"
@@ -74,7 +74,7 @@ onMounted(async () => {
           <h1
             class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-500 via-orange-500 to-green-500 bg-clip-text text-transparent mb-2 animate-gradient"
           >
-            End-nanonna
+            えんどなのんな
           </h1>
           <!-- キラキラエフェクト -->
           <div
@@ -101,7 +101,6 @@ onMounted(async () => {
 
       <!-- フッター -->
       <footer class="mt-8 text-center text-xs text-gray-500 space-y-1">
-        <p>© 2025 End-nanonna</p>
         <p>アニメ「のんのんびより」風のGIFを生成します</p>
         <div
           class="flex items-center justify-center space-x-4 mt-3 pt-3 border-t border-gray-200"
