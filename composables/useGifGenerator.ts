@@ -1,3 +1,4 @@
+import { requiredAt } from "~/utils/requiredAt";
 import {
   CanvasImageProcessor,
   type AnimationFrame,
@@ -40,7 +41,7 @@ export const useGifGenerator = () => {
     { name: "アニメーションフレーム生成中...", weight: 35 },
     { name: "GIF合成中...", weight: 15 },
     { name: "最終処理中...", weight: 5 }
-  ];
+  ] as const;
 
   // 文字ごとの設定（nonnon.jsから）
   const mojiConfig: MojiConfig = {
@@ -148,7 +149,7 @@ export const useGifGenerator = () => {
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        const alpha = data[(y * width + x) * 4 + 3];
+        const alpha = requiredAt(data, (y * width + x) * 4 + 3);
         if (alpha > 0) {
           left = Math.min(left, x);
           top = Math.min(top, y);
@@ -184,17 +185,17 @@ export const useGifGenerator = () => {
 
     for (let i = 0; i < chars.length; i++) {
       const charCanvas = await createTextCanvas(
-        chars[i],
-        mojiConfig.size[i],
-        mojiConfig.fill[i],
-        mojiConfig.rotate[i],
+        requiredAt(chars, i),
+        requiredAt(mojiConfig.size, i),
+        requiredAt(mojiConfig.fill, i),
+        requiredAt(mojiConfig.rotate, i),
         fontFamily
       );
 
       const expandedCanvas = document.createElement("canvas");
       expandedCanvas.width = charCanvas.width;
       expandedCanvas.height = Math.floor(
-        mojiConfig.size[i] * mojiConfig.heightScale[i]
+        requiredAt(mojiConfig.size, i) * requiredAt(mojiConfig.heightScale, i)
       );
       const expandedCtx = expandedCanvas.getContext("2d")!;
       expandedCtx.drawImage(
@@ -214,10 +215,10 @@ export const useGifGenerator = () => {
         baseCtx.drawImage(expandedCanvas, 0, 0);
       } else {
         // geo文字列をパース（例: '+70+10' -> x=70, y=10）
-        const geo = mojiConfig.geo[i];
+        const geo = requiredAt(mojiConfig.geo, i);
         const matches = geo.match(/\+(\d+)\+(\d+)/);
-        const x = matches ? parseInt(matches[1]) : 0;
-        const y = matches ? parseInt(matches[2]) : 0;
+        const x = matches ? parseInt(requiredAt(matches, 1)) : 0;
+        const y = matches ? parseInt(requiredAt(matches, 2)) : 0;
 
         if (baseCanvas) {
           const baseCtx = baseCanvas.getContext("2d")!;
@@ -359,7 +360,7 @@ export const useGifGenerator = () => {
 
             if (frameNum >= 107 && frameNum <= 123) {
               // 文字が徐々に大きくなる部分（nonnon.jsの107-123処理）
-              const textHeight = heights[heightIndex];
+              const textHeight = requiredAt(heights, heightIndex);
 
               // 文字画像を指定の高さにスケール
               const scaledTextCanvas = document.createElement("canvas");
@@ -378,7 +379,7 @@ export const useGifGenerator = () => {
               compositeCanvas = await processor.compositeTextOnImage(
                 frameCanvas,
                 scaledTextCanvas,
-                heights[heights.length - 1] // 最終的な高さ（135）を渡す
+                requiredAt(heights, heights.length - 1) // 最終的な高さ（135）を渡す
               );
 
               // heightIndexは各フレーム番号につき一度だけ増加
@@ -389,21 +390,21 @@ export const useGifGenerator = () => {
               // 文字画像を指定の高さにスケール
               const scaledTextCanvas = document.createElement("canvas");
               scaledTextCanvas.width = textCanvas.width;
-              scaledTextCanvas.height = heights[heights.length - 1];
+              scaledTextCanvas.height = requiredAt(heights, heights.length - 1);
               const scaledCtx = scaledTextCanvas.getContext("2d")!;
               scaledCtx.drawImage(
                 textCanvas,
                 0,
                 0,
                 textCanvas.width,
-                heights[heights.length - 1]
+                requiredAt(heights, heights.length - 1)
               );
               // 文字サイズ固定部分（nonnon.jsの124-200処理）
               const frameCanvas = processor.createCanvasFromGifFrame(frameGif);
               compositeCanvas = await processor.compositeTextOnImage(
                 frameCanvas,
                 scaledTextCanvas,
-                heights[heights.length - 1] // 最終的な高さ（135）を渡す
+                requiredAt(heights, heights.length - 1) // 最終的な高さ（135）を渡す
               );
             } else {
               // 文字なし
