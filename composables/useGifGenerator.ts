@@ -1,3 +1,4 @@
+import { onUnmounted, readonly, ref } from "vue";
 import { requiredAt } from "~/utils/requiredAt";
 import {
   CanvasImageProcessor,

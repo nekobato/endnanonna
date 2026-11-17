@@ -1,5 +1,7 @@
 # End-nanonna Nuxt.js 移行計画
 
+> 過去のNuxt移行に関する記録。現行の構成と開発・配信手順は [README](../README.md)、Vue + Voidへの移行設計は [移行計画](void-cloudflare-migration.md) を参照する。
+
 ## 📋 現在のプロジェクト機能仕様
 
 ### 🎯 プロジェクト概要

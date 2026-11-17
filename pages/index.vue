@@ -1,14 +1,7 @@
 <script lang="ts" setup>
-// SEO設定
-useSeoMeta({
-  title: "えんどなのんな - のんのんびより風GIF生成",
-  description:
-    "アニメ「のんのんびより」のエンディングテーマ風のアニメーションGIFを生成するWebアプリケーション",
-  ogTitle: "えんどなのんな",
-  ogDescription: "のんのんびより風GIF生成アプリ",
-  ogImage: "/og-image.png",
-  twitterCard: "summary_large_image"
-});
+import { onMounted, ref } from "vue";
+import GifGenerator from "~/components/GifGenerator.vue";
+import { useFont } from "~/utils/fontLoader";
 
 // 状態管理
 const generatedGif = ref<string | null>(null);

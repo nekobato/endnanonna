@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { computed, ref } from "vue";
+
 interface Props {
   modelValue: string;
   placeholder?: string;
