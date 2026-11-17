@@ -1,0 +1,24 @@
+allowBuilds:
+  better-sqlite3: false
+  esbuild: true
+  sharp: true
+  workerd: true
+minimumReleaseAgeExclude:
+  - '@cloudflare/build-output-utils@1.0.0-rc.0'
+  - '@cloudflare/codemods@0.8.0'
+  - '@cloudflare/config@1.0.0-rc.0'
+  - '@cloudflare/runtime-types@0.1.29'
+  - '@cloudflare/vite-plugin@2.0.0-rc.0'
+  - '@cloudflare/workers-auth@0.18.3'
+  - '@cloudflare/workers-types@5.20261117.1'
+  - '@cloudflare/workers-utils@0.54.1'
+  - '@void/deploy-cloudflare@1.10.0'
+  - '@void/deploy-core@1.10.0'
+  - '@void/edge@1.10.0'
+  - '@void/isr@1.10.0'
+  - '@void/platform@1.10.0'
+  - '@void/vue@1.10.0'
+  - cf@1.0.0-rc.0
+  - hono@4.13.19
+  - miniflare@5.20261116.0-beta
+  - void@1.10.0

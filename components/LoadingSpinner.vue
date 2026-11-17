@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { computed } from "vue";
+
 type Props = {
   progress?: number;
   message?: string;

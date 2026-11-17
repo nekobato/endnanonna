@@ -1,4 +1,10 @@
 <script lang="ts" setup>
+import { computed, ref, watch } from "vue";
+import { useGifGenerator } from "~/composables/useGifGenerator";
+import { useTextValidator } from "~/composables/useTextValidator";
+import LoadingSpinner from "./LoadingSpinner.vue";
+import TextInput from "./TextInput.vue";
+
 interface Props {
   initialText?: string;
 }

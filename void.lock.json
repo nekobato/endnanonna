@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "source": {
+    "account_id": "42db971ff95e560fd0e710d0e28ae655",
+    "name": "endnanonna",
+    "workers_dev": true,
+    "preview_urls": true
+  },
+  "resolved": {
+    "account_id": "42db971ff95e560fd0e710d0e28ae655",
+    "name": "endnanonna",
+    "compatibility_date": "2026-02-24",
+    "workers_dev": true,
+    "preview_urls": true,
+    "routes": [
+      {
+        "pattern": "endnanonna.nekobato.app",
+        "custom_domain": true
+      }
+    ]
+  },
+  "text": "// void:published-traffic:v1:eyJ3b3JrZXJzX2RldiI6dHJ1ZSwicHJldmlld191cmxzIjp0cnVlLCJyb3V0ZXMiOlt7InBhdHRlcm4iOiJlbmRuYW5vbm5hLm5la29iYXRvLmFwcCIsImN1c3RvbV9kb21haW4iOnRydWV9XX0\n{\n  \"account_id\": \"42db971ff95e560fd0e710d0e28ae655\",\n  \"name\": \"endnanonna\",\n  \"compatibility_date\": \"2026-02-24\",\n  \"workers_dev\": true,\n  \"preview_urls\": true,\n  \"routes\": [\n    {\n      \"pattern\": \"endnanonna.nekobato.app\",\n      \"custom_domain\": true\n    }\n  ]\n}\n"
+}

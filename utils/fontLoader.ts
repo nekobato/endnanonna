@@ -1,3 +1,5 @@
+import { readonly, ref } from "vue";
+
 export interface FontConfig {
   family: string;
   url: string;
@@ -93,7 +95,7 @@ export const useFontLoader = (): FontLoader => {
   return fontLoaderInstance;
 };
 
-// Nuxt用のcomposable
+// フォント読み込み状態をVueコンポーネントへ公開する。
 export const useFont = () => {
   const fontLoader = useFontLoader();
   const isLoading = ref(false);
