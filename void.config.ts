@@ -26,6 +26,8 @@ export default defineConfig({
   },
   cloudflare: {
     account_id: "42db971ff95e560fd0e710d0e28ae655",
-    name: "endnanonna"
+    name: "endnanonna",
+    workers_dev: true,
+    preview_urls: true
   }
 });
