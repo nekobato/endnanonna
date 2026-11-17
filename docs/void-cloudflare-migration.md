@@ -106,3 +106,15 @@ Vercelとの並行配信は切り替え確認までの一時状態とする。�
 ## Convergence Review / 収束確認
 
 不変条件と検証対応表を最終状態に照合し、結果をREADMEと実行記録へ反映する。設定・運用・動作の未完了は完了扱いにしない。
+
+## 実施結果（2026-11-17）
+
+- 既存テスト3件、型検査、本番ビルド、`git diff --check` が成功した。Nuxtの実行依存と設定を撤去した。
+- 独立したChromeで1280×720と390×844の表示を確認し、モバイル幅で横方向のはみ出しがないことを確認した。英字7文字の入力エラー後、日本語7文字で再生成できた。
+- `のんのんびより` から生成・保存したGIFは、Vercel版、ローカル版、Cloudflareの検証用URL、本番独自ドメインの4環境でSHA-256が一致した。GIF89a、640×360、201フレーム、16,890 ms、4,292,184 bytes。SHA-256: `a6e917b92773afbce94bdea7225050df6a31265673bc6b6c17b35fd1174e3bf0`。
+- `https://endnanonna.nekobato.app/` をCloudflare Custom Domainへ接続した。元のVercel向けCNAMEのTTLは権威DNSで300秒だった。TTL経過後、1.1.1.1と8.8.8.8でCloudflareのAレコードを確認した。
+- 本番独自ドメインでHTTPS 200、`lang="ja"`、`noindex, nofollow`、Voidの生成HTMLを確認した。GIF Worker、ベースGIF、フォント、robots.txtは配信元ファイルのSHA-256とContent-Typeが一致し、存在しないパスは404になった。ブラウザのコンソールエラーは0件だった。
+- 上記の確認後、Vercelの `nekobatoken/endnanonna` プロジェクトを削除した。管理画面の削除完了遷移と一覧からの消失を確認した。削除後も独自ドメインはCloudflareから200を返し、旧 `endnanonna.vercel.app` は404になった。
+- 独自ドメイン、Worker名、アカウント、公開URL設定は `void.config.ts` と `void.lock.json` に保存した。ローカル検証サーバーは終了した。
+
+実行記録と画面・GIFの成果物は、作業を実行したLocal/macOSの `output/playwright/` に保存した。成果物はGitの対象外。
